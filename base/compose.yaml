@@ -1,0 +1,69 @@
+name: ya-arch-sprint-2-project-base
+
+x-restart-policy: &restart_policy
+  restart: on-failure:3
+
+x-depends-on-healthy: &depends_on_healthy
+  condition: service_healthy
+
+x-healthcheck-defaults: &healthcheck_defaults
+  interval: 10s
+  timeout: 1m
+  start_period: 10s
+  retries: 3
+
+services:
+  mongodb-1:
+    container_name: mongodb-1
+    image: mongo
+    <<: *restart_policy
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-1-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      <<: *healthcheck_defaults
+
+  api:
+    container_name: api
+    depends_on:
+      mongodb-1:
+        <<: *depends_on_healthy
+    image: ya-arch-sprint-2-project/api
+    build:
+      context: api
+    <<: *restart_policy
+    profiles:
+      - api
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_URL: mongodb://mongodb-1
+      MONGODB_DATABASE_NAME: somedb
+    healthcheck:
+      test: curl --fail http://localhost:8080/livez
+      <<: *healthcheck_defaults
+
+  mongo-express:
+    container_name: mongo-express
+    depends_on:
+      mongodb-1:
+        <<: *depends_on_healthy
+    image: mongo-express
+    <<: *restart_policy
+    profiles:
+      - mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb-1
+      ME_CONFIG_BASICAUTH: false
+    healthcheck:
+      # does not resolve localhost
+      test: nc -z 127.0.0.1:8081 || exit 1
+      <<: *healthcheck_defaults
+
+
+volumes:
+  mongodb-1-data:
