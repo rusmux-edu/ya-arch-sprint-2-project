@@ -21,3 +21,5 @@ docker compose --profile api --profile mongo-express up -d
 ```shell
 ./scripts/mongodb-init.sh
 ```
+
+После этого в коллекции `users` появится 1000 пользователей.

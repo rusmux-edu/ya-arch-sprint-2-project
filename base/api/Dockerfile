@@ -17,6 +17,13 @@ WORKDIR /app
 RUN groupadd -g 1000 user \
     && useradd -u 1000 -g user user
 
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  apt-get update \
+  && apt-get install -y --no-install-recommends \
+    # for healthcheck
+    curl
+
 COPY --chown=user:user uv.lock pyproject.toml ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project --no-dev
