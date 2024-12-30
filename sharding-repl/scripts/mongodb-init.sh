@@ -16,20 +16,28 @@ rs.initiate(
 );
 EOF
 
-dc_exec mongodb-shard-1 mongosh --port 27019 <<EOF
+dc_exec mongodb-shard-1-1 mongosh --port 27117 <<EOF
 rs.initiate(
     {
         _id: "shard-1",
-        members: [{_id: 0, host: "mongodb-shard-1:27019"}]
+        members: [
+            {_id: 0, host: "mongodb-shard-1-1:27117"},
+            {_id: 1, host: "mongodb-shard-1-2:27118"},
+            {_id: 2, host: "mongodb-shard-1-3:27119"},
+        ]
     }
 );
 EOF
 
-dc_exec mongodb-shard-2 mongosh --port 27020 <<EOF
+dc_exec mongodb-shard-2-1 mongosh --port 27217 <<EOF
 rs.initiate(
     {
         _id: "shard-2",
-        members: [{_id: 0, host: "mongodb-shard-2:27020"}]
+        members: [
+            {_id: 0, host: "mongodb-shard-2-1:27217"},
+            {_id: 1, host: "mongodb-shard-2-2:27218"},
+            {_id: 2, host: "mongodb-shard-2-3:27219"},
+        ]
     }
 );
 EOF
@@ -37,8 +45,8 @@ EOF
 sleep 5  # wait for the config server to be ready
 
 dc_exec mongos-router mongosh --port 27017 <<EOF
-sh.addShard("shard-1/mongodb-shard-1:27019");
-sh.addShard("shard-2/mongodb-shard-2:27020");
+sh.addShard("shard-1/mongodb-shard-1-1:27117");
+sh.addShard("shard-2/mongodb-shard-2-1:27217");
 sh.enableSharding("somedb");
 sh.shardCollection("somedb.users", {"name": "hashed"});
 

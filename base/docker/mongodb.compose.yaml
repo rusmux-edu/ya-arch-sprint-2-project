@@ -1,5 +1,3 @@
-name: ya-arch-sprint-2-project-base
-
 x-restart-policy: &restart_policy
   restart: on-failure:3
 
@@ -25,26 +23,6 @@ services:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       <<: *healthcheck_defaults
 
-  api:
-    container_name: api
-    depends_on:
-      mongodb-1:
-        <<: *depends_on_healthy
-    image: ya-arch-sprint-2-project/api
-    build:
-      context: api
-    <<: *restart_policy
-    profiles:
-      - api
-    ports:
-      - "8080:8080"
-    environment:
-      MONGODB_URL: mongodb://mongodb-1:27017
-      MONGODB_DATABASE_NAME: somedb
-    healthcheck:
-      test: curl --fail http://localhost:8080/livez
-      <<: *healthcheck_defaults
-
   mongo-express:
     container_name: mongo-express
     depends_on:
@@ -63,7 +41,6 @@ services:
       # does not resolve localhost
       test: nc -z 127.0.0.1:8081 || exit 1
       <<: *healthcheck_defaults
-
 
 volumes:
   mongodb-1-data:

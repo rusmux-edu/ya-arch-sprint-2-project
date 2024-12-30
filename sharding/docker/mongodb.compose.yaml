@@ -17,7 +17,7 @@ services:
     <<: *restart_policy
     volumes:
       - mongodb-configSrv-data:/data/db
-    command: ["--configsvr", "--replSet", "config-server", "--bind_ip_all", "--port", "27018"]
+    command: ["--configsvr", "--replSet", "config-server", "--bind_ip_all", "--port", "27018", "--logpath", "/dev/null"]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27018/test --quiet
       <<: *healthcheck_defaults
@@ -28,11 +28,15 @@ services:
     <<: *restart_policy
     ports:
       - "27017:27017"
-    command: ["mongos", "--configdb", "config-server/mongodb-configSrv:27018", "--bind_ip_all", "--port", "27017"]
+    command: [
+      "mongos", "--configdb", "config-server/mongodb-configSrv:27018",
+      "--bind_ip_all", "--port", "27017", # "--logpath", "/dev/null"
+      # for some reason adding --logpath /dev/null results in errors with exit code 0 or 133
+    ]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       <<: *healthcheck_defaults
-      start_interval: 50s  # wait for the initialization script
+      start_interval: 40s  # wait for the initialization script
 
   mongodb-shard-1:
     container_name: mongodb-shard-1
@@ -40,7 +44,7 @@ services:
     <<: *restart_policy
     volumes:
       - mongodb-shard-1-data:/data/db
-    command: ["--shardsvr", "--replSet", "shard-1", "--bind_ip_all", "--port", "27019"]
+    command: ["--shardsvr", "--replSet", "shard-1", "--bind_ip_all", "--port", "27019", "--logpath", "/dev/null"]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27019/test --quiet
       <<: *healthcheck_defaults
@@ -51,7 +55,7 @@ services:
     <<: *restart_policy
     volumes:
       - mongodb-shard-2-data:/data/db
-    command: ["--shardsvr", "--replSet", "shard-2", "--bind_ip_all", "--port", "27020"]
+    command: ["--shardsvr", "--replSet", "shard-2", "--bind_ip_all", "--port", "27020", "--logpath", "/dev/null"]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27020/test --quiet
       <<: *healthcheck_defaults
@@ -74,7 +78,6 @@ services:
       # does not resolve localhost
       test: nc -z 127.0.0.1:8081 || exit 1
       <<: *healthcheck_defaults
-
 
 volumes:
   mongodb-configSrv-data:
