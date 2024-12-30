@@ -46,9 +46,7 @@ async def root(
         replica_status = "No Replicas"
 
     topology_description = client.topology_description
-    read_preference = client.client_options.read_preference
     topology_type = topology_description.topology_type_name
-    replicaset_name = topology_description.replica_set_name
 
     shards = None
     if topology_type == "Sharded":
@@ -57,13 +55,11 @@ async def root(
         for shard in shards_list.get("shards", {}):
             shards[shard["_id"]] = shard["host"]
 
-    cache_enabled = FastAPICache.get_enable() if settings.redis_url else False
-
     return {
         "mongo_topology_type": topology_type,
-        "mongo_replicaset_name": replicaset_name,
+        "mongo_replicaset_name": topology_description.replica_set_name,
         "mongo_db": settings.mongodb_database_name,
-        "read_preference": str(read_preference),
+        "read_preference": str(client.client_options.read_preference),
         "mongo_nodes": client.nodes,
         "mongo_primary_host": client.primary,
         "mongo_secondary_hosts": client.secondaries,
@@ -72,7 +68,7 @@ async def root(
         "mongo_is_mongos": client.is_mongos,
         "collections": collections,
         "shards": shards,
-        "cache_enabled": cache_enabled,
+        "cache_enabled": FastAPICache.get_enable() if settings.redis_url else False,
         "status": "OK",
     }
 
