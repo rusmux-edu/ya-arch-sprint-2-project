@@ -11,5 +11,6 @@ uv sync --frozen
 ## Запуск
 
 ```shell
-uvicorn --factory api.app:create_app --port 8080
+export UVICORN_PORT=8080
+uvicorn --factory api.app:create_app
 ```

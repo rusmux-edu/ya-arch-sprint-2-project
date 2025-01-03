@@ -1,9 +1,6 @@
 x-restart-policy: &restart_policy
   restart: on-failure:3
 
-x-depends-on-healthy: &depends_on_healthy
-  condition: service_healthy
-
 x-healthcheck-defaults: &healthcheck_defaults
   interval: 10s
   timeout: 1m
@@ -24,7 +21,7 @@ services:
     <<: *restart_policy
     volumes:
       - mongodb-configSrv-data:/data/db
-    command: ["--configsvr", "--replSet", "config-server", "--bind_ip_all"]
+    command: [--configsvr, --replSet, config-server, --bind_ip_all]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27019/test --quiet
       <<: *healthcheck_defaults
@@ -35,31 +32,49 @@ services:
     <<: *restart_policy
     ports:
       - "27017:27017"
-    command: ["mongos", "--configdb", "config-server/mongodb-configSrv:27019", "--bind_ip_all"]
+    command: [mongos, --configdb, config-server/mongodb-configSrv:27019, --bind_ip_all]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       <<: *healthcheck_defaults
-      start_interval: 40s  # wait for the initialization script
+      start_interval: 20s  # wait for the initialization script
 
   mongodb-shard-1-1:
     container_name: mongodb-shard-1-1
     <<: *mongodb_shard_base
     volumes:
       - mongodb-shard-1-1-data:/data/db
-    command: ["--shardsvr", "--replSet", "shard-1", "--bind_ip_all"]
+    command: [--shardsvr, --replSet, shard-1, --bind_ip_all]
 
   mongodb-shard-2-1:
     container_name: mongodb-shard-2-1
     <<: *mongodb_shard_base
     volumes:
       - mongodb-shard-2-1-data:/data/db
-    command: ["--shardsvr", "--replSet", "shard-2", "--bind_ip_all"]
+    command: [--shardsvr, --replSet, shard-2, --bind_ip_all]
+
+  mongodb-init:
+    container_name: mongodb-init
+    depends_on:
+      mongodb-configSrv:
+        condition: service_started
+      mongos-router:
+        condition: service_started
+      mongodb-shard-1-1:
+        condition: service_started
+      mongodb-shard-2-1:
+        condition: service_started
+    image: docker
+    <<: *restart_policy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../scripts/mongodb-init.sh:/mongodb-init.sh
+    command: [sh, ./mongodb-init.sh]
 
   mongo-express:
     container_name: mongo-express
     depends_on:
       mongos-router:
-        <<: *depends_on_healthy
+        condition: service_healthy
     image: mongo-express
     <<: *restart_policy
     profiles:

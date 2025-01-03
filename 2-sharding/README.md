@@ -14,12 +14,6 @@ docker compose -f docker/compose.yaml --profile api up -d
 docker compose -f docker/compose.yaml --profile api --profile mongo-express up -d
 ```
 
-После чего интерактивная документация API будет доступна на http://localhost:8080/docs.
+При создании контейнера с MongoDB в коллекции `users` появится 1000 пользователей, равномерно распределенных по шардам.
 
-Инициализируем конфигурационный сервер, роутер и шарды, наполняем MongoDB данными:
-
-```shell
-./scripts/mongodb-init.sh
-```
-
-После этого в коллекции `users` появится 1000 пользователей, равномерно распределенных по шардам.
+Интерактивная документация API будет доступна на http://localhost:8080/docs.

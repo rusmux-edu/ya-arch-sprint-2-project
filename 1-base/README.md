@@ -16,4 +16,4 @@ docker compose -f docker/compose.yaml --profile api --profile mongo-express up -
 
 При создании контейнера с MongoDB, в коллекции `users` появится 1000 пользователей.
 
-После чего интерактивная документация API будет доступна на http://localhost:8080/docs.
+Интерактивная документация API будет доступна на http://localhost:8080/docs.

@@ -1,0 +1,9 @@
+services:
+  api:
+    container_name: ''
+    ports: !reset []
+    environment:
+      USE_GATEWAY: true
+      GATEWAY__CONSUL_URL: http://consul:8500
+    deploy:
+      replicas: 2

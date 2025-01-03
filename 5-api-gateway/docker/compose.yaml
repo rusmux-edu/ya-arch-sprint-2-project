@@ -1,0 +1,7 @@
+name: ya-arch-sprint-2-project-api-gateway
+
+include:
+  - gateway.compose.yaml
+  - path:
+      - ../../4-sharding-repl-cache/docker/compose.yaml
+      - api.override.yaml

@@ -1,9 +1,6 @@
 x-restart-policy: &restart_policy
   restart: on-failure:3
 
-x-depends-on-healthy: &depends_on_healthy
-  condition: service_healthy
-
 x-healthcheck-defaults: &healthcheck_defaults
   interval: 10s
   timeout: 1m
@@ -28,7 +25,7 @@ services:
     container_name: mongo-express
     depends_on:
       mongodb:
-        <<: *depends_on_healthy
+        condition: service_healthy
     image: mongo-express
     <<: *restart_policy
     profiles:

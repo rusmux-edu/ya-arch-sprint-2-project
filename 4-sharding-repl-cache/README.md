@@ -1,6 +1,6 @@
-# MongoDB с шардированием и репликацией, API с кэшированием
+# Кэширование запросов в Redis
 
-В данной папке разворачивается MongoDB с шардированием c репликами, и API с кэшированием запросов через Redis.
+В данной папке разворачивается MongoDB с шардированием и репликацией, API с кэшированием запросов в Redis.
 
 ## Запуск
 
@@ -8,18 +8,17 @@
 docker compose -f docker/compose.yaml --profile api up -d
 ```
 
-Поднимется MongoDB, API и Redis. При желании можно поднять MongoDB Express и Redis Insight:
+Поднимется MongoDB, API и Redis.
+
+При желании можно поднять MongoDB Express и Redis Insight:
 
 ```shell
 docker compose -f docker/compose.yaml --profile api --profile mongo-express --profile redis-insight up -d
 ```
 
-После чего интерактивная документация API будет доступна на http://localhost:8080/docs.
+При создании контейнера с MongoDB в коллекции `users` появится 1000 пользователей, равномерно распределенных по шардам.
 
-Инициализируем конфигурационный сервер, роутер и шарды, наполняем MongoDB данными:
+Интерактивная документация API будет доступна на http://localhost:8080/docs.
 
-```shell
-../3-sharding-repl/scripts/mongodb-init.sh
-```
-
-После этого в коллекции `users` появится 1000 пользователей, равномерно распределенных по шардам.
+Проверить работу кэширования можно замерив скорость выполнения запроса `/{collection_name}/users` первый и последующие
+разы.

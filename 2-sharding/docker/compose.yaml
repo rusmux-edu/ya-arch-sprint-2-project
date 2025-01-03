@@ -2,4 +2,6 @@ name: ya-arch-sprint-2-project-sharding
 
 include:
   - mongodb.compose.yaml
-  - ../../1-base/docker/api.compose.yaml
+  - path:
+      - ../../1-base/docker/api.compose.yaml
+      - api.override.yaml

@@ -1,0 +1,11 @@
+services:
+  mongodb-init:
+    depends_on:
+      mongodb-shard-1-2:
+        condition: service_started
+      mongodb-shard-1-3:
+        condition: service_started
+      mongodb-shard-2-2:
+        condition: service_started
+      mongodb-shard-2-3:
+        condition: service_started

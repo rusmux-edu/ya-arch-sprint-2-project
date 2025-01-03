@@ -1,8 +1,7 @@
 name: ya-arch-sprint-2-project-sharding-repl-cache
 
 include:
+  - redis.compose.yaml
   - path:
-      - ../../3-sharding-repl/docker/mongodb.compose.yaml
-      - redis.compose.yaml
-      - ../../1-base/docker/api.compose.yaml
+      - ../../3-sharding-repl/docker/compose.yaml
       - api.override.yaml

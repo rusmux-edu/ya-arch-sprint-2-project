@@ -2,7 +2,7 @@ services:
   api:
     container_name: api
     depends_on:
-      mongos-router:
+      mongodb:
         condition: service_healthy
     image: ya-arch-sprint-2-project/api
     build:
@@ -13,8 +13,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      MONGODB_URL: mongodb://mongos-router
-      MONGODB_DATABASE_NAME: somedb
+      MONGODB__URL: mongodb://mongodb
+      MONGODB__DATABASE_NAME: somedb
     healthcheck:
       test: curl --fail http://localhost:8080/livez
       interval: 10s

@@ -35,4 +35,5 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 USER user
 
-CMD ["uvicorn", "--factory", "api.app:create_app", "--host", "0.0.0.0", "--port", "8080"]
+ENV UVICORN_PORT=8080
+CMD ["uvicorn", "--factory", "api.app:create_app", "--host", "0.0.0.0"]

@@ -11,6 +11,7 @@ docstring-code-format = true
 [lint]
 logger-objects = ["loguru.logger"]
 select = ["ALL"]
+external = ["WPS"]
 
 ignore = [
     "CPY001", # ignore missing copyright notice

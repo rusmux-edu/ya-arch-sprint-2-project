@@ -12,6 +12,7 @@ dependencies = [
     "pydantic-settings>=2.7.0",
     "redis[hiredis]>=5.2.1",
     "uvicorn[standard]>=0.34.0",
+    "httpx>=0.28.1",
 ]
 
 
@@ -22,6 +23,7 @@ dev-dependencies = [
     "mypy[reports]>=1.11.2",
     "ruff>=0.6.5",
     "vulture>=2.11",
+    "wemake-python-styleguide>=1.0.0",
 ]
 
 

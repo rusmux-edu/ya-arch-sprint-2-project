@@ -8,7 +8,7 @@ from fastapi.exceptions import HTTPException
 from fastapi_cache import FastAPICache
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
-from api.config import settings
+from api.config import SERVICE_HOST_IP, settings
 from api.models import UserCollection, UserModel
 from api.utils import cache
 
@@ -16,17 +16,17 @@ router = APIRouter()
 
 
 def get_client() -> AsyncIOMotorClient:
-    return AsyncIOMotorClient(settings.mongodb_url)
+    return AsyncIOMotorClient(settings.mongodb.url)
 
 
-def get_db(client: tp.Annotated[AsyncIOMotorClient, Depends(get_client)]) -> AsyncIOMotorDatabase:
-    return client[settings.mongodb_database_name]
+def get_db(client: tp.Annotated[AsyncIOMotorClient, Depends(get_client)]) -> AsyncIOMotorDatabase:  # noqa: FURB118
+    return client[settings.mongodb.database_name]
 
 
 @router.get("/livez")
 async def livez() -> dict[str, str]:
     """Check if the service is alive."""
-    return {"status": "alive"}
+    return {"status": "alive", "host": SERVICE_HOST_IP}
 
 
 @router.get("/")
@@ -41,12 +41,13 @@ async def root(
         collections[collection_name] = {"documents_count": await collection.count_documents({})}
     try:
         replica_status = await client.admin.command("replSetGetStatus")
-        replica_status = json.dumps(replica_status, indent=2, default=str)
     except pymongo.errors.OperationFailure:
         replica_status = "No Replicas"
+    else:
+        replica_status = json.dumps(replica_status, indent=2, default=str)
 
     topology_description = client.topology_description
-    topology_type = topology_description.topology_type_name
+    topology_type = topology_description.topology_type_name  # type: ignore[attr-defined]
 
     shards = None
     if topology_type == "Sharded":
@@ -57,8 +58,8 @@ async def root(
 
     return {
         "mongo_topology_type": topology_type,
-        "mongo_replicaset_name": topology_description.replica_set_name,
-        "mongo_db": settings.mongodb_database_name,
+        "mongo_replicaset_name": topology_description.replica_set_name,  # type: ignore[attr-defined]
+        "mongo_db": settings.mongodb.database_name,
         "read_preference": str(client.client_options.read_preference),
         "mongo_nodes": client.nodes,
         "mongo_primary_host": client.primary,
@@ -68,7 +69,7 @@ async def root(
         "mongo_is_mongos": client.is_mongos,
         "collections": collections,
         "shards": shards,
-        "cache_enabled": FastAPICache.get_enable() if settings.redis_url else False,
+        "cache_enabled": FastAPICache.get_enable() if settings.redis else False,
         "status": "OK",
     }
 
@@ -80,12 +81,11 @@ async def collection_count(
 ) -> dict:
     collection = db.get_collection(collection_name)
     items_count = await collection.count_documents({})
-    # status = await client.admin.command('replSetGetStatus')
-    return {"status": "OK", "mongo_db": settings.mongodb_database_name, "items_count": items_count}
+    return {"status": "OK", "mongo_db": settings.mongodb.database_name, "items_count": items_count}
 
 
 @router.get("/{collection_name}/users", response_model_by_alias=False)
-@cache(expire=60 * 1)
+@cache(expire=60)
 async def list_users(
     db: tp.Annotated[AsyncIOMotorDatabase, Depends(get_db)],
     collection_name: str,
@@ -93,7 +93,7 @@ async def list_users(
     """List all the user data in the database.
     The response is not paginated and limited to 1000 results.
     """
-    time.sleep(1)  # for demonstrating caching
+    time.sleep(1)  # for demonstrating caching # noqa: ASYNC251
     collection = db.get_collection(collection_name)
     return UserCollection(users=await collection.find().to_list(1000))
 
@@ -108,7 +108,7 @@ async def show_user(
     collection = db.get_collection(collection_name)
     if (user := await collection.find_one({"name": name})) is not None:
         return user
-    raise HTTPException(status_code=404, detail=f"User {name} not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {name} not found")
 
 
 @router.post(
@@ -124,4 +124,4 @@ async def create_user(
     """Insert a new user record. A unique `id` will be created and provided in the response."""
     collection = db.get_collection(collection_name)
     new_user = await collection.insert_one(user.model_dump(by_alias=True, exclude={"id"}))
-    return await collection.find_one({"_id": new_user.inserted_id})
+    return await collection.find_one({"_id": new_user.inserted_id})  # type: ignore[return-value]
