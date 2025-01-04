@@ -1,4 +1,4 @@
-name: ya-arch-sprint-2-project-sharding
+name: ya-arch-sprint-2-project
 
 include:
   - mongodb.compose.yaml

@@ -30,7 +30,7 @@ services:
     <<: *restart_policy
     volumes:
       - ../scripts/apisix-init.sh:/apisix-init.sh
-    command: [sh, /apisix-init.sh]
+    command: [/apisix-init.sh]
 
   apisix-dashboard:
     container_name: apisix-dashboard

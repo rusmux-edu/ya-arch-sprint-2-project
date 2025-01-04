@@ -40,3 +40,6 @@ discovery:
     dump:
       path: logs/consul.dump
       expire: 2592000
+
+# needed for hot reload
+#END
