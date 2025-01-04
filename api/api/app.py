@@ -25,7 +25,10 @@ async def internal_exception_handler(_request: Request, exc: Exception) -> Plain
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> tp.AsyncIterator[None]:
     if settings.redis:
-        redis = aioredis.from_url(settings.redis.url, encoding="utf8", decode_responses=True)
+        if settings.redis.is_cluster:
+            redis = aioredis.RedisCluster.from_url(settings.redis.url, decode_responses=True)
+        else:
+            redis = aioredis.Redis.from_url(settings.redis.url, decode_responses=True)
         FastAPICache.init(RedisBackend(redis), prefix="api:cache")
 
     if settings.use_gateway and not settings.gateway:

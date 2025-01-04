@@ -1,6 +1,5 @@
 services:
   api:
-    container_name: api
     depends_on:
       mongodb:
         condition: service_healthy

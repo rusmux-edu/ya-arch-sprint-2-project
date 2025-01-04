@@ -26,6 +26,7 @@ class MongoDBSettings(BasePydanticSettings):
 
 class RedisSettings(BasePydanticSettings):
     url: str
+    is_cluster: bool = False
 
 
 class GatewaySettings(BasePydanticSettings):

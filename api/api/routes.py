@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi_cache import FastAPICache
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from pymongo import ReadPreference, WriteConcern
 
 from api.config import SERVICE_HOST_IP, settings
 from api.models import UserCollection, UserModel
@@ -16,11 +17,11 @@ router = APIRouter()
 
 
 def get_client() -> AsyncIOMotorClient:
-    return AsyncIOMotorClient(settings.mongodb.url)
+    return AsyncIOMotorClient(settings.mongodb.url, read_preference=ReadPreference.SECONDARY_PREFERRED)
 
 
-def get_db(client: tp.Annotated[AsyncIOMotorClient, Depends(get_client)]) -> AsyncIOMotorDatabase:  # noqa: FURB118
-    return client[settings.mongodb.database_name]
+def get_db(client: tp.Annotated[AsyncIOMotorClient, Depends(get_client)]) -> AsyncIOMotorDatabase:
+    return client.get_database(settings.mongodb.database_name, write_concern=WriteConcern(w=2))
 
 
 @router.get("/livez")

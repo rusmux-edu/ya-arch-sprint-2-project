@@ -1,6 +1,5 @@
 services:
   api:
-    container_name: ''
     ports: !reset []
     environment:
       USE_GATEWAY: true

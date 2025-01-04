@@ -7,12 +7,14 @@ Apache APISIX.
 
 - [1-base](1-base) – MongoDB без шардирования и репликации, API без кэширования.
 
-- [2-sharding](2-sharding) – MongoDB с шардированием без реплик, API без кэширования.
+- [2-sharding-repl](2-sharding-repl) – MongoDB с шардированием и репликами (и без), API без кэширования.
 
-- [3-sharding-repl](3-sharding-repl) – MongoDB с шардированием с репликами, API без кэширования.
-
-- [4-sharding-repl-cache](4-sharding-repl-cache) – MongoDB с шардированием с репликами, API с кэшированием запросов в
+- [3-sharding-repl-cache](3-sharding-repl-cache) – MongoDB с шардированием с репликами, API с кэшированием запросов в
   Redis.
 
-- [5-api-gateway](5-api-gateway) – MongoDB с шардированием с репликами, несколько экземпляров API с кэшированием
-  запросов в Redis и маршрутизацией через Apache APISIX
+- [4-api-gateway](4-api-gateway) – MongoDB с шардированием с репликами, несколько экземпляров API с кэшированием
+  запросов в Redis и маршрутизацией через Apache APISIX.
+
+> [!IMPORTANT]
+> Для запуска проектов требуется Docker Compose версии 2.24.4 или выше, а также доступ к Docker сокету по пути
+`/var/run/docker.sock`.

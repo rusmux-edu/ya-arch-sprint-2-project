@@ -1,11 +1,19 @@
 # MongoDB с шардированием
 
-В данной папке разворачивается MongoDB с шардированием без реплик, и API без кэширования.
+В данной папке разворачивается MongoDB с шардированием и репликами, и API без кэширования.
 
 ## Запуск
 
+Без реплик:
+
 ```shell
 docker compose -f docker/compose.yaml --profile api up -d
+```
+
+С репликами:
+
+```shell
+docker compose -f docker/compose.yaml --profile api up -d --scale mongodb-shard-1=3 --scale mongodb-shard-2=3
 ```
 
 Поднимется MongoDB и API. При желании можно поднять MongoDB Express:

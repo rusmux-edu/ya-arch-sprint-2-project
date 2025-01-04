@@ -10,6 +10,8 @@ x-healthcheck-defaults: &healthcheck_defaults
 x-mongodb-shard-base: &mongodb_shard_base
   image: mongo
   <<: *restart_policy
+  volumes:
+    - /data/db
   healthcheck:
     test: echo 'db.runCommand("ping").ok' | mongosh localhost:27018/test --quiet
     <<: *healthcheck_defaults
@@ -36,33 +38,26 @@ services:
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       <<: *healthcheck_defaults
-      start_interval: 20s  # wait for the initialization script
 
-  mongodb-shard-1-1:
-    container_name: mongodb-shard-1-1
+  mongodb-shard-1:
     <<: *mongodb_shard_base
-    volumes:
-      - mongodb-shard-1-1-data:/data/db
     command: [--shardsvr, --replSet, shard-1, --bind_ip_all]
 
-  mongodb-shard-2-1:
-    container_name: mongodb-shard-2-1
+  mongodb-shard-2:
     <<: *mongodb_shard_base
-    volumes:
-      - mongodb-shard-2-1-data:/data/db
     command: [--shardsvr, --replSet, shard-2, --bind_ip_all]
 
   mongodb-init:
     container_name: mongodb-init
     depends_on:
       mongodb-configSrv:
-        condition: service_started
+        condition: service_healthy
       mongos-router:
         condition: service_started
-      mongodb-shard-1-1:
-        condition: service_started
-      mongodb-shard-2-1:
-        condition: service_started
+      mongodb-shard-1:
+        condition: service_healthy
+      mongodb-shard-2:
+        condition: service_healthy
     image: docker
     <<: *restart_policy
     volumes:
@@ -91,5 +86,3 @@ services:
 
 volumes:
   mongodb-configSrv-data:
-  mongodb-shard-1-1-data:
-  mongodb-shard-2-1-data:

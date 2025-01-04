@@ -1,7 +1,0 @@
-services:
-  api:
-    depends_on:
-      redis:
-        condition: service_healthy
-    environment:
-      REDIS__URL: redis://redis:6379
