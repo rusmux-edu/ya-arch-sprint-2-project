@@ -1,5 +1,0 @@
-name: ya-arch-sprint-2-project
-
-include:
-  - mongodb.compose.yaml
-  - api.compose.yaml

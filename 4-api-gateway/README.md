@@ -6,7 +6,7 @@
 ## Запуск
 
 ```shell
-docker compose -f docker/compose.yaml --profile api --profile redis up -d
+docker compose --profile redis up -d
 ```
 
 Поднимется MongoDB, 2 экземпляра API, Redis, APISIX и сервисы, необходимые для его работы.
@@ -14,14 +14,15 @@ docker compose -f docker/compose.yaml --profile api --profile redis up -d
 При желании можно поднять MongoDB Express, Redis Insight, Grafana, APISIX Dashboard:
 
 ```shell
-docker compose -f docker/compose.yaml \
-  --profile api --profile redis --profile mongo-express --profile redis-insight ... up -d
+docker compose --profile redis --profile mongo-express --profile redis-insight ... up -d
 ```
+
+Чтобы не перечислять все профили, можно указать `--profile "*"`.
 
 Масштабировать количество экземпляров API можно параметром `--scale`:
 
 ```shell
-docker compose -f docker/compose.yaml --profile api --profile redis up -d --scale api=3
+docker compose --profile redis up -d --scale api=3
 ```
 
 Каждый экземпляр при запуске сам регистрируется в реестре HashiCorp Consul.
@@ -29,3 +30,9 @@ docker compose -f docker/compose.yaml --profile api --profile redis up -d --scal
 При создании контейнера с MongoDB в коллекции `users` появится 1000 пользователей, равномерно распределенных по шардам.
 
 Интерактивная документация API будет доступна на http://localhost:9080/mongodb-api/docs.
+
+## Остановка
+
+```shell
+docker compose --profile "*" down --remove-orphans --volumes
+```

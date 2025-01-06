@@ -44,6 +44,8 @@ services:
         condition: service_healthy
     image: docker
     <<: *restart_policy
+    profiles:
+      - redis-cluster
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../scripts/redis-cluster-init.sh:/redis-cluster-init.sh

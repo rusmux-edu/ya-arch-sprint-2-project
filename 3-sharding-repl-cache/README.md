@@ -7,7 +7,7 @@
 ### Одиночный Redis
 
 ```shell
-docker compose -f docker/compose.yaml --profile api --profile redis up -d
+docker compose --profile redis up -d
 ```
 
 Поднимется MongoDB, API и 1 экземпляр Redis.
@@ -15,9 +15,10 @@ docker compose -f docker/compose.yaml --profile api --profile redis up -d
 При желании можно поднять MongoDB Express и Redis Insight:
 
 ```shell
-docker compose -f docker/compose.yaml \
-  --profile api --profile redis --profile mongo-express --profile redis-insight up -d
+docker compose --profile redis --profile mongo-express --profile redis-insight up -d
 ```
+
+Чтобы не перечислять все профили, можно указать `--profile "*"`.
 
 При создании контейнера с MongoDB в коллекции `users` появится 1000 пользователей, равномерно распределенных по шардам.
 
@@ -32,11 +33,17 @@ docker compose -f docker/compose.yaml \
 [`api`](docker/api.override.yaml). После чего запустить сервисы с профилем `redis-cluster`:
 
 ```shell
-docker compose -f docker/compose.yaml --profile api --profile redis-cluster up -d
+docker compose --profile redis-cluster up -d
 ```
 
 Изменить количество нод в кластере можно через аргумент `--scale`:
 
 ```shell
-docker compose -f docker/compose.yaml --profile api --profile redis-cluster up -d --scale redis-cluster=8
+docker compose --profile redis-cluster up -d --scale redis-cluster=8
+```
+
+## Остановка
+
+```shell
+docker compose --profile "*" down --remove-orphans --volumes
 ```

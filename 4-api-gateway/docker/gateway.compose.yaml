@@ -39,6 +39,8 @@ services:
         condition: service_healthy
     image: apache/apisix-dashboard
     <<: *restart_policy
+    profiles:
+      - apisix-dashboard
     ports:
       - "9000:9000"
     volumes:

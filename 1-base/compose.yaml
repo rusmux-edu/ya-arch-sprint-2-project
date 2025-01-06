@@ -1,0 +1,5 @@
+name: ya-arch-sprint-2-project
+
+include:
+  - docker/mongodb.compose.yaml
+  - docker/api.compose.yaml

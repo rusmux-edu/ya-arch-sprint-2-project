@@ -1,0 +1,8 @@
+name: ya-arch-sprint-2-project
+
+include:
+  - docker/redis.compose.yaml
+  - path:
+      - ../2-sharding-repl/compose.yaml
+      - docker/mongodb.override.yaml
+      - docker/api.override.yaml
