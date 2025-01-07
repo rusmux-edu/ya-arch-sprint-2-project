@@ -3,6 +3,8 @@
 В данной папке разворачивается MongoDB с шардированием и репликацией, API с кэшированием запросов в Redis и
 маршрутизацией через Apache APISIX.
 
+<img src="diagram.drawio.png" alt="diagram" height="640">
+
 ## Запуск
 
 ```shell
@@ -25,7 +27,8 @@ docker compose --profile redis --profile mongo-express --profile redis-insight .
 docker compose --profile redis up -d --scale api=3
 ```
 
-Каждый экземпляр при запуске сам регистрируется в реестре HashiCorp Consul.
+Каждый экземпляр при запуске сам регистрируется в реестре HashiCorp Consul. Посмотреть зарегистрированные сервисы и их
+состояние можно в UI Consul по адресу http://localhost:8500.
 
 При создании контейнера с MongoDB в коллекции `users` появится 1000 пользователей, равномерно распределенных по шардам.
 

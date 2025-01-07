@@ -2,7 +2,7 @@
 
 В данной папке разворачивается MongoDB без шардирования и репликации, и API без кэширования.
 
-<img src="diagram.drawio.png" alt="diagram">
+<img src="diagram.png" alt="diagram" height="640">
 
 ## Запуск
 
