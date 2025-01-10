@@ -54,3 +54,5 @@ builtins-allowed-modules = ["logging", "types"]
 
 [lint.per-file-ignores]
 "__init__.py" = ["F401"]
+
+"api/factory.py" = ["RUF029"]  # async is needed for the cache to work

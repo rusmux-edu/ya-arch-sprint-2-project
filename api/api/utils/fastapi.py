@@ -12,4 +12,4 @@ def nocache(*_args: tp.Any, **_kwargs: tp.Any) -> tp.Callable:
     return decorator
 
 
-cache = cache if settings.redis else nocache
+route_cache = cache if settings.redis else nocache

@@ -21,7 +21,7 @@ class BasePydanticSettings(BaseSettings):
 
 class MongoDBSettings(BasePydanticSettings):
     url: str
-    database_name: str
+    db_name: str
 
 
 class RedisSettings(BasePydanticSettings):

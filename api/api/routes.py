@@ -2,26 +2,20 @@ import json
 import time
 import typing as tp
 
+import async_timeout
 import pymongo.errors
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi_cache import FastAPICache
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from pymongo import ReadPreference, WriteConcern
+from redis import asyncio as aioredis
 
 from api.config import SERVICE_HOST_IP, settings
+from api.factory import get_cache_backend, get_db, get_db_client
 from api.models import UserCollection, UserModel
-from api.utils import cache
+from api.utils.fastapi import route_cache
 
 router = APIRouter()
-
-
-def get_client() -> AsyncIOMotorClient:
-    return AsyncIOMotorClient(settings.mongodb.url, read_preference=ReadPreference.SECONDARY_PREFERRED)
-
-
-def get_db(client: tp.Annotated[AsyncIOMotorClient, Depends(get_client)]) -> AsyncIOMotorDatabase:
-    return client.get_database(settings.mongodb.database_name, write_concern=WriteConcern(w=2))
 
 
 @router.get("/livez")
@@ -30,9 +24,31 @@ async def livez() -> dict[str, str]:
     return {"status": "alive", "host": SERVICE_HOST_IP}
 
 
+@router.get("/readyz")
+async def readyz(
+    db: tp.Annotated[AsyncIOMotorDatabase, Depends(get_db)],
+    cache_backend: tp.Annotated[aioredis.Redis | aioredis.RedisCluster | None, Depends(get_cache_backend)],
+) -> dict[str, str]:
+    """Check if the service is ready."""
+    try:
+        async with async_timeout.timeout(3):
+            await db.command("ping")
+    except Exception:  # noqa: BLE001
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE) from None
+
+    if cache_backend:
+        try:
+            async with async_timeout.timeout(3):
+                await cache_backend.ping()
+        except Exception:  # noqa: BLE001
+            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE) from None
+
+    return {"status": "ready", "host": SERVICE_HOST_IP}
+
+
 @router.get("/")
 async def root(
-    client: tp.Annotated[AsyncIOMotorClient, Depends(get_client)],
+    client: tp.Annotated[AsyncIOMotorClient, Depends(get_db_client)],
     db: tp.Annotated[AsyncIOMotorDatabase, Depends(get_db)],
 ) -> dict:
     """Get metadata about MongoDB."""
@@ -60,7 +76,7 @@ async def root(
     return {
         "mongo_topology_type": topology_type,
         "mongo_replicaset_name": topology_description.replica_set_name,  # type: ignore[attr-defined]
-        "mongo_db": settings.mongodb.database_name,
+        "mongo_db": settings.mongodb.db_name,
         "read_preference": str(client.client_options.read_preference),
         "mongo_nodes": client.nodes,
         "mongo_primary_host": client.primary,
@@ -82,11 +98,11 @@ async def collection_count(
 ) -> dict:
     collection = db.get_collection(collection_name)
     items_count = await collection.count_documents({})
-    return {"status": "OK", "mongo_db": settings.mongodb.database_name, "items_count": items_count}
+    return {"status": "OK", "mongo_db": settings.mongodb.db_name, "items_count": items_count}
 
 
 @router.get("/{collection_name}/users", response_model_by_alias=False)
-@cache(expire=60)
+@route_cache(expire=60)
 async def list_users(
     db: tp.Annotated[AsyncIOMotorDatabase, Depends(get_db)],
     collection_name: str,

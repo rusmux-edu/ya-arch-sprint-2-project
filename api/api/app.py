@@ -8,10 +8,10 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import PlainTextResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
 
 from api import __version__
 from api.config import SERVICE_HOST_IP, SERVICE_NAME, settings
+from api.factory import get_cache_backend
 from api.routes import router
 
 
@@ -24,12 +24,8 @@ async def internal_exception_handler(_request: Request, exc: Exception) -> Plain
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> tp.AsyncIterator[None]:
-    if settings.redis:
-        if settings.redis.is_cluster:
-            redis = aioredis.RedisCluster.from_url(settings.redis.url, decode_responses=True)
-        else:
-            redis = aioredis.Redis.from_url(settings.redis.url, decode_responses=True)
-        FastAPICache.init(RedisBackend(redis), prefix="api:cache")
+    if cache_backend := await get_cache_backend():
+        FastAPICache.init(RedisBackend(cache_backend), prefix="api:cache")
 
     if settings.use_gateway and not settings.gateway:
         raise ValueError("gateway settings are required in production mode")
