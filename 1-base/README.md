@@ -7,14 +7,16 @@
 ## Запуск
 
 ```shell
-docker compose up -d
+docker compose --profile api up -d
 ```
 
 Поднимется MongoDB и API. При желании можно поднять MongoDB Express:
 
 ```shell
-docker compose --profile mongo-express up -d
+docker compose --profile api --profile mongo-express up -d
 ```
+
+Чтобы не перечислять все профили, можно указать `--profile "*"`.
 
 При создании контейнера с MongoDB, в коллекции `users` появится 1000 пользователей.
 

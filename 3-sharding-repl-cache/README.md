@@ -9,7 +9,7 @@
 ### Одиночный Redis
 
 ```shell
-docker compose --profile redis up -d
+docker compose --profile api --profile redis up -d
 ```
 
 Поднимется MongoDB, API и 1 экземпляр Redis.
@@ -17,7 +17,7 @@ docker compose --profile redis up -d
 При желании можно поднять MongoDB Express и Redis Insight:
 
 ```shell
-docker compose --profile redis --profile mongo-express --profile redis-insight up -d
+docker compose --profile api --profile redis --profile mongo-express --profile redis-insight up -d
 ```
 
 Чтобы не перечислять все профили, можно указать `--profile "*"`.

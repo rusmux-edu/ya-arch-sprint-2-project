@@ -9,20 +9,22 @@
 Без реплик:
 
 ```shell
-docker compose up -d
+docker compose --profile api up -d
 ```
 
 С репликами:
 
 ```shell
-docker compose up -d --scale mongodb-shard-1=3 --scale mongodb-shard-2=3
+docker compose up --profile api -d --scale mongodb-shard-1=3 --scale mongodb-shard-2=3
 ```
 
 Поднимется MongoDB и API. При желании можно поднять MongoDB Express:
 
 ```shell
-docker compose --profile mongo-express up -d
+docker compose --profile api --profile mongo-express up -d
 ```
+
+Чтобы не перечислять все профили, можно указать `--profile "*"`.
 
 При создании контейнера с MongoDB в коллекции `users` появится 1000 пользователей, равномерно распределенных по шардам.
 

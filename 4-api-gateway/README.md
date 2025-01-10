@@ -8,7 +8,7 @@
 ## Запуск
 
 ```shell
-docker compose --profile redis up -d
+docker compose --profile api --profile redis up -d
 ```
 
 Поднимется MongoDB, 2 экземпляра API, Redis, APISIX и сервисы, необходимые для его работы.
@@ -16,7 +16,7 @@ docker compose --profile redis up -d
 При желании можно поднять MongoDB Express, Redis Insight, Grafana, APISIX Dashboard:
 
 ```shell
-docker compose --profile redis --profile mongo-express --profile redis-insight ... up -d
+docker compose --profile api --profile redis --profile mongo-express --profile redis-insight ... up -d
 ```
 
 Чтобы не перечислять все профили, можно указать `--profile "*"`.
@@ -24,7 +24,7 @@ docker compose --profile redis --profile mongo-express --profile redis-insight .
 Масштабировать количество экземпляров API можно параметром `--scale`:
 
 ```shell
-docker compose --profile redis up -d --scale api=3
+docker compose --profile api --profile redis up -d --scale api=3
 ```
 
 Каждый экземпляр при запуске сам регистрируется в реестре HashiCorp Consul. Посмотреть зарегистрированные сервисы и их
