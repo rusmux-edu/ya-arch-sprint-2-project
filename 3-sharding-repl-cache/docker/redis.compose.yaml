@@ -1,0 +1,67 @@
+x-restart-policy: &restart_policy
+  restart: on-failure:3
+
+x-healthcheck-defaults: &healthcheck_defaults
+  interval: 10s
+  timeout: 1m
+  start_period: 10s
+  retries: 3
+
+x-redis-base: &redis_base
+  image: redis
+  <<: *restart_policy
+  volumes:
+    - /data
+    - ../configs/redis.conf:/usr/local/etc/redis/redis.conf
+  command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+  healthcheck:
+    test: redis-cli ping
+    <<: *healthcheck_defaults
+
+services:
+  redis:
+    container_name: redis
+    <<: *redis_base
+    profiles:
+      - redis
+    ports:
+      - "6379:6379"
+    volumes: !override
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+  redis-cluster:
+    <<: *redis_base
+    profiles:
+      - redis-cluster
+    deploy:
+      replicas: 6
+
+  redis-cluster-init:
+    container_name: redis-cluster-init
+    depends_on:
+      redis-cluster:
+        condition: service_healthy
+    image: docker
+    <<: *restart_policy
+    profiles:
+      - redis-cluster
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../scripts/redis-cluster-init.sh:/redis-cluster-init.sh
+    command: [/redis-cluster-init.sh]
+
+  redis-insight:
+    container_name: redis-insight
+    image: redis/redisinsight
+    <<: *restart_policy
+    profiles:
+      - redis-insight
+    ports:
+      - "5540:5540"
+    healthcheck:
+      test: wget --spider http://127.0.0.1:5540/api/health
+      <<: *healthcheck_defaults
+
+volumes:
+  redis-data:

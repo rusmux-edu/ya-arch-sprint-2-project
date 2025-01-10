@@ -1,0 +1,109 @@
+x-restart-policy: &restart_policy
+  restart: on-failure:3
+
+x-healthcheck-defaults: &healthcheck_defaults
+  interval: 10s
+  timeout: 1m
+  start_period: 10s
+  retries: 3
+
+services:
+  apisix:
+    container_name: apisix
+    depends_on:
+      etcd:
+        condition: service_healthy
+    image: apache/apisix
+    <<: *restart_policy
+    ports:
+      - "9180:9180"
+      - "9080:9080"
+    volumes:
+      - ../configs/apisix.yaml:/usr/local/apisix/conf/config.yaml
+
+  apisix-init:
+    container_name: apisix-init
+    depends_on:
+      apisix:
+        condition: service_started
+    image: curlimages/curl
+    <<: *restart_policy
+    volumes:
+      - ../scripts/apisix-init.sh:/apisix-init.sh
+    command: [/apisix-init.sh]
+
+  apisix-dashboard:
+    container_name: apisix-dashboard
+    depends_on:
+      etcd:
+        condition: service_healthy
+    image: apache/apisix-dashboard
+    <<: *restart_policy
+    profiles:
+      - apisix-dashboard
+    ports:
+      - "9000:9000"
+    volumes:
+      - ../configs/apisix-dashboard.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+    healthcheck:
+      test: curl --fail http://localhost:9000
+      <<: *healthcheck_defaults
+
+  etcd:
+    container_name: etcd
+    image: bitnami/etcd
+    <<: *restart_policy
+    volumes:
+      - etcd-data:/bitnami/etcd
+    environment:
+      ETCD_ENABLE_V2: 'true'
+      ALLOW_NONE_AUTHENTICATION: 'yes'
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+    healthcheck:
+      test: /opt/bitnami/scripts/etcd/healthcheck.sh
+      <<: *healthcheck_defaults
+
+  consul:
+    container_name: consul
+    image: hashicorp/consul
+    <<: *restart_policy
+    ports:
+      - "8500:8500"
+    command: [agent, -server, -bootstrap-expect=1, -node=agent-one, -client=0.0.0.0, -log-level=info,
+              -data-dir=/consul/data, -enable-script-checks, -ui]
+    healthcheck:
+      test: curl --fail http://localhost:8500/v1/status/leader
+      <<: *healthcheck_defaults
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    <<: *restart_policy
+    profiles:
+      - grafana
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../configs/prometheus.yml:/etc/prometheus/prometheus.yml
+    healthcheck:
+      test: wget --spider http://localhost:9090/-/healthy
+      <<: *healthcheck_defaults
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    <<: *restart_policy
+    profiles:
+      - grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../configs/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ../configs/grafana/provisioning:/etc/grafana/provisioning
+      - ../configs/grafana/dashboards:/var/lib/grafana/dashboards
+    healthcheck:
+      test: curl --fail http://localhost:3000/api/health
+
+volumes:
+  etcd-data:

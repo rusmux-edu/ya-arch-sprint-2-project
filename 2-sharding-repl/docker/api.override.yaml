@@ -1,0 +1,7 @@
+services:
+  api:
+    depends_on: !override
+      mongos-router:
+        condition: service_healthy
+    environment:
+      MONGODB__URL: mongodb://mongos-router
