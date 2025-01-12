@@ -1,14 +1,16 @@
 # Маршрутизация через Apache APISIX
 
-В данной папке разворачивается MongoDB с шардированием и репликацией, API с кэшированием запросов в Redis и
+В данной папке развертывается MongoDB с шардированием и репликацией, API с кэшированием запросов в Redis и
 маршрутизацией через Apache APISIX.
 
 <img src="diagram.drawio.png" alt="diagram" height="640">
 
 ## Запуск
 
+Все сервисы разделены на профили, чтобы можно было запускать и тестировать их по отдельности.
+
 ```shell
-docker compose --profile api --profile redis up -d
+docker compose --profile api --profile mongodb --profile redis --profile apisix up -d
 ```
 
 Поднимется MongoDB, 2 экземпляра API, Redis, APISIX и сервисы, необходимые для его работы.
@@ -16,7 +18,7 @@ docker compose --profile api --profile redis up -d
 При желании можно поднять MongoDB Express, Redis Insight, Grafana, APISIX Dashboard:
 
 ```shell
-docker compose --profile api --profile redis --profile mongo-express --profile redis-insight ... up -d
+docker compose --profile api --profile redis --profile apisix --profile mongo-express --profile redis-insight ... up -d
 ```
 
 Чтобы не перечислять все профили, можно указать `--profile "*"`.
@@ -24,7 +26,7 @@ docker compose --profile api --profile redis --profile mongo-express --profile r
 Масштабировать количество экземпляров API можно параметром `--scale`:
 
 ```shell
-docker compose --profile api --profile redis up -d --scale api=3
+docker compose --profile api --profile mongodb --profile redis --profile apisix up -d --scale api=3
 ```
 
 Каждый экземпляр при запуске сам регистрируется в реестре HashiCorp Consul. Посмотреть зарегистрированные сервисы и их

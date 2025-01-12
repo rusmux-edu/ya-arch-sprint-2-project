@@ -1,15 +1,17 @@
 # Кэширование запросов в Redis
 
-В данной папке разворачивается MongoDB с шардированием и репликацией, API с кэшированием запросов в Redis.
+В данной папке развертывается MongoDB с шардированием и репликацией, API с кэшированием запросов в Redis.
 
 <img src="diagram.png" alt="diagram" height="640">
 
 ## Запуск
 
+Все сервисы разделены на профили, чтобы можно было запускать и тестировать их по отдельности.
+
 ### Одиночный Redis
 
 ```shell
-docker compose --profile api --profile redis up -d
+docker compose --profile api --profile mongodb --profile redis up -d
 ```
 
 Поднимется MongoDB, API и 1 экземпляр Redis.
@@ -35,13 +37,13 @@ docker compose --profile api --profile redis --profile mongo-express --profile r
 [`api`](docker/api.override.yaml). После чего запустить сервисы с профилем `redis-cluster`:
 
 ```shell
-docker compose --profile redis-cluster up -d
+docker compose --profile api --profile mongodb --profile redis-cluster up -d
 ```
 
 Изменить количество нод в кластере можно через аргумент `--scale`:
 
 ```shell
-docker compose --profile redis-cluster up -d --scale redis-cluster=8
+docker compose --profile api --profile mongodb --profile redis-cluster up -d --scale redis-cluster=8
 ```
 
 ## Остановка

@@ -7,9 +7,15 @@ x-healthcheck-defaults: &healthcheck_defaults
   start_period: 10s
   retries: 3
 
-x-mongodb-shard-base: &mongodb_shard_base
+x-mongodb-base: &mongodb_base
   image: mongo
   <<: *restart_policy
+  profiles:
+    - mongodb
+    - mongo-express
+
+x-mongodb-shard-base: &mongodb_shard_base
+  <<: *mongodb_base
   volumes:
     - /data/db
   healthcheck:
@@ -19,8 +25,7 @@ x-mongodb-shard-base: &mongodb_shard_base
 services:
   mongodb-configSrv:
     container_name: mongodb-configSrv
-    image: mongo
-    <<: *restart_policy
+    <<: *mongodb_base
     volumes:
       - mongodb-configSrv-data:/data/db
     command: [--configsvr, --replSet, config-server, --bind_ip_all]
@@ -30,8 +35,10 @@ services:
 
   mongos-router:
     container_name: mongos-router
-    image: mongo
-    <<: *restart_policy
+    depends_on:
+      mongodb-configSrv:
+        condition: service_healthy
+    <<: *mongodb_base
     ports:
       - "27017:27017"
     command: [mongos, --configdb, config-server/mongodb-configSrv:27019, --bind_ip_all]
@@ -60,6 +67,9 @@ services:
         condition: service_healthy
     image: docker
     <<: *restart_policy
+    profiles:
+      - mongodb
+      - mongo-express
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../scripts/mongodb-init.sh:/mongodb-init.sh
@@ -81,7 +91,7 @@ services:
       ME_CONFIG_BASICAUTH: false
     healthcheck:
       # does not resolve localhost
-      test: nc -z 127.0.0.1:8081 || exit 1
+      test: wget --spider http://127.0.0.1:8081
       <<: *healthcheck_defaults
 
 volumes:

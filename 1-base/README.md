@@ -1,13 +1,15 @@
 # Базовая MongoDB и API
 
-В данной папке разворачивается MongoDB без шардирования и репликации, и API без кэширования.
+В данной папке развертывается MongoDB без шардирования и репликации, и API без кэширования.
 
 <img src="diagram.png" alt="diagram" height="640">
 
 ## Запуск
 
+Все сервисы разделены на профили, чтобы можно было запускать и тестировать их по отдельности.
+
 ```shell
-docker compose --profile api up -d
+docker compose --profile api --profile mongodb up -d
 ```
 
 Поднимется MongoDB и API. При желании можно поднять MongoDB Express:

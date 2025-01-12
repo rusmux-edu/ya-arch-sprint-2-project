@@ -17,6 +17,6 @@ services:
     healthcheck:
       test: curl --fail http://localhost:8080/livez
       interval: 10s
-      timeout: 1m
+      timeout: 10s
       start_period: 10s
       retries: 3

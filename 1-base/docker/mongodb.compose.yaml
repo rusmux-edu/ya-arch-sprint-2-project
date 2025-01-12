@@ -12,6 +12,9 @@ services:
     container_name: mongodb
     image: mongo
     <<: *restart_policy
+    profiles:
+      - mongodb
+      - mongo-express
     ports:
       - "27017:27017"
     volumes:
@@ -37,7 +40,7 @@ services:
       ME_CONFIG_BASICAUTH: false
     healthcheck:
       # does not resolve localhost
-      test: nc -z 127.0.0.1:8081 || exit 1
+      test: wget --spider http://127.0.0.1:8081
       <<: *healthcheck_defaults
 
 volumes:

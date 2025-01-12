@@ -15,6 +15,9 @@ services:
         condition: service_healthy
     image: apache/apisix
     <<: *restart_policy
+    profiles:
+      - apisix
+      - apisix-dashboard
     ports:
       - "9180:9180"
       - "9080:9080"
@@ -28,6 +31,9 @@ services:
         condition: service_started
     image: curlimages/curl
     <<: *restart_policy
+    profiles:
+      - apisix
+      - apisix-dashboard
     volumes:
       - ../scripts/apisix-init.sh:/apisix-init.sh
     command: [/apisix-init.sh]
@@ -53,6 +59,8 @@ services:
     container_name: etcd
     image: bitnami/etcd
     <<: *restart_policy
+    profiles:
+      - apisix
     volumes:
       - etcd-data:/bitnami/etcd
     environment:
@@ -68,10 +76,13 @@ services:
     container_name: consul
     image: hashicorp/consul
     <<: *restart_policy
+    profiles:
+      - apisix
     ports:
       - "8500:8500"
-    command: [agent, -server, -bootstrap-expect=1, -node=agent-one, -client=0.0.0.0, -log-level=info,
-              -data-dir=/consul/data, -enable-script-checks, -ui]
+    volumes:
+      - consul-data:/consul/data
+    command: [agent, -server, -bootstrap-expect=1, -node=agent-1, -client=0.0.0.0, -enable-script-checks, -ui]
     healthcheck:
       test: curl --fail http://localhost:8500/v1/status/leader
       <<: *healthcheck_defaults
@@ -107,3 +118,4 @@ services:
 
 volumes:
   etcd-data:
+  consul-data:
