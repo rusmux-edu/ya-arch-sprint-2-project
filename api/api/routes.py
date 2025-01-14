@@ -4,11 +4,11 @@ import typing as tp
 
 import async_timeout
 import pymongo.errors
+import redis.asyncio as aioredis
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi_cache import FastAPICache
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from redis import asyncio as aioredis
 
 from api.config import SERVICE_HOST_IP, settings
 from api.factory import get_cache_backend, get_db, get_db_client

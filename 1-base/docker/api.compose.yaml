@@ -3,9 +3,10 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-    image: ya-arch-sprint-2-project-api:0.1.0
+    image: ya-arch-sprint-2-project-api:0.1.0-distroless
     build:
       context: ../../api
+      dockerfile: distroless.Dockerfile
     restart: on-failure:3
     profiles:
       - api
@@ -15,7 +16,7 @@ services:
       MONGODB__URL: mongodb://mongodb
       MONGODB__DB_NAME: somedb
     healthcheck:
-      test: curl --fail http://localhost:8080/livez
+      test: ["CMD", "python", "-m", "api.utils.healthcheck"]
       interval: 10s
       timeout: 10s
       start_period: 10s

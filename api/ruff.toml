@@ -9,7 +9,6 @@ target-version = "py310"
 docstring-code-format = true
 
 [lint]
-logger-objects = ["loguru.logger"]
 select = ["ALL"]
 external = ["WPS"]
 
