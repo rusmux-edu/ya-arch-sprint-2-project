@@ -1,0 +1,30 @@
+replicaCount: 3
+
+image:
+  repository: 192.168.0.125:5000/ya-arch-sprint-2-project-api
+
+mongodb:
+  dbName: example_db
+
+redis:
+  isCluster: false
+
+externalSecrets:
+  enabled: true
+  provider:
+    vault:
+      server: http://host.minikube.internal:8200
+      path: secret
+      auth:
+        userPass:
+          path: userpass
+          username: admin
+          secretRef:
+            name: api-vault-password
+            key: password
+
+knative:
+  enabled: true
+
+autoscaling:
+  enabled: false

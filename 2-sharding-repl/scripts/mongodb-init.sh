@@ -30,9 +30,9 @@ sleep 3  # wait for the config server to be ready
 docker exec mongos-router sh -c "echo \"
 sh.addShard('shard-1/ya-arch-sprint-2-project-mongodb-shard-1-1:27018');
 sh.addShard('shard-2/ya-arch-sprint-2-project-mongodb-shard-2-1:27018');
-sh.enableSharding('somedb');
-sh.shardCollection('somedb.users', {'name': 'hashed'});
+sh.enableSharding('example_db');
+sh.shardCollection('example_db.users', {'name': 'hashed'});
 
-use somedb;
+use example_db;
 for (var i = 0; i < 1000; i++) db.users.insertOne({age: i, name: 'User ' + i});
 \" | mongosh"

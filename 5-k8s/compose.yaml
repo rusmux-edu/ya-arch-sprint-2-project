@@ -1,0 +1,9 @@
+name: ya-arch-sprint-2-project
+
+include:
+  - path:
+      - ../4-api-gateway/compose.yaml
+      - docker/consul.override.yaml
+      - docker/mongodb.override.yaml
+  - docker/vault.compose.yaml
+  - docker/registry.compose.yaml

@@ -1,0 +1,4 @@
+services:
+  consul:
+    profiles:
+      - vault

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: api
+description: A Helm chart for Python API of Yandex.Practicum architecture course sprint 2 project
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

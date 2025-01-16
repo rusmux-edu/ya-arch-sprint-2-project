@@ -1,0 +1,57 @@
+x-restart-policy: &restart_policy
+  restart: on-failure:3
+
+x-healthcheck-defaults: &healthcheck_defaults
+  interval: 10s
+  timeout: 1m
+  start_period: 10s
+  retries: 3
+
+services:
+  registry:
+    container_name: registry
+    image: registry
+    <<: *restart_policy
+    profiles:
+      - registry
+      - registry-ui
+    ports:
+      - "5000:5000"
+    volumes:
+      - registry-data:/var/lib/registry
+    environment:
+      REGISTRY_STORAGE_DELETE_ENABLED: 'true'
+      REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '[Docker-Content-Digest]'
+    healthcheck:
+      test: wget --spider http://localhost:5000/v2
+      <<: *healthcheck_defaults
+
+  registry-ui:
+    container_name: registry-ui
+    depends_on:
+      registry:
+        condition: service_healthy
+    image: joxit/docker-registry-ui
+    <<: *restart_policy
+    profiles:
+      - registry-ui
+    ports:
+      - "80:80"
+    environment:
+      SINGLE_REGISTRY: true
+      REGISTRY_TITLE: Docker Registry UI
+      DELETE_IMAGES: true
+      SHOW_CONTENT_DIGEST: true
+      NGINX_PROXY_PASS_URL: http://registry:5000
+      SHOW_CATALOG_NB_TAGS: true
+      CATALOG_MIN_BRANCHES: 1
+      CATALOG_MAX_BRANCHES: 1
+      TAGLIST_PAGE_SIZE: 100
+      REGISTRY_SECURED: false
+      CATALOG_ELEMENTS_LIMIT: 1000
+    healthcheck:
+      test: wget --spider http://127.0.0.1:80
+      <<: *healthcheck_defaults
+
+volumes:
+  registry-data:

@@ -1,0 +1,21 @@
+{{- if .Values.knative.enabled -}}
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: {{ include "api.fullname" . }}
+  labels:
+    {{- include "api.labels" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "api.labels" . | nindent 8 }}
+      annotations:
+        autoscaling.knative.dev/max-scale: {{ .Values.knative.maxScale | quote }}
+        autoscaling.knative.dev/metric: {{ .Values.knative.metric }}
+        autoscaling.knative.dev/target: {{ .Values.knative.target | quote }}
+        autoscaling.knative.dev/window: 30s
+    spec:
+      automountServiceAccountToken: false
+      {{ include "spec.containers" . | nindent 6 }}
+{{- end }}

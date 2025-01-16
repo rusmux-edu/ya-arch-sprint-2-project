@@ -1,0 +1,10 @@
+x-deploy-defaults: &deploy_defaults
+  deploy:
+    replicas: 1
+
+services:
+  mongodb-shard-1:
+    <<: *deploy_defaults
+
+  mongodb-shard-2:
+    <<: *deploy_defaults
