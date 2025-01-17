@@ -1,0 +1,66 @@
+default_install_hook_types: [commit-msg, pre-commit, pre-push]
+
+repos:
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.1.0
+    hooks:
+      - id: commitizen
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-toml
+      - id: check-json
+      - id: check-xml
+      - id: check-docstring-first
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: [--maxkb=10240]
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: destroyed-symlinks
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: pretty-format-json
+        args: [--autofix, --no-ensure-ascii]
+      - id: detect-aws-credentials
+      - id: detect-private-key
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.23.1
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: [--format, parsable, --strict, -d, '{extends: relaxed, rules: {line-length: {max: 120}}}']
+        exclude: chart
+
+  - repo: https://github.com/lyz-code/yamlfix
+    rev: 1.17.0
+    hooks:
+      - id: yamlfix
+        args: [--config-file, yamlfix.toml]
+        exclude: chart
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.21
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-shfmt
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: [--format, gcc]
+
+  - repo: https://github.com/AleksaC/hadolint-py
+    rev: v2.12.1b3
+    hooks:
+      - id: hadolint
+        args: [--failure-threshold, style]

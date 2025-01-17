@@ -13,7 +13,7 @@ x-redis-base: &redis_base
   volumes:
     - /data
     - ../configs/redis.conf:/usr/local/etc/redis/redis.conf
-  command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+  command: [redis-server, /usr/local/etc/redis/redis.conf]
   healthcheck:
     test: redis-cli ping
     <<: *healthcheck_defaults

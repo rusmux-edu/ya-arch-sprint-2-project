@@ -68,7 +68,7 @@ ip -4 addr | grep inet | awk 'NR==2 {print $2}' | cut -d '/' -f1
 ```shell
 helm package ../api/chart
 curl --data-binary "@api-0.1.0.tgz" "http://<node_ip>:30080/api/charts"
-helm repo add local "http://<node_ip>:30080" 
+helm repo add local "http://<node_ip>:30080"
 helm repo update
 ```
 

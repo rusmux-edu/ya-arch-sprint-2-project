@@ -7,9 +7,13 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
+  {{ include "spec.podSecurity" . | nindent 2 }}
   containers:
     - name: wget
       image: busybox
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
       command: ['wget']
       args: ['--spider', '{{ include "api.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

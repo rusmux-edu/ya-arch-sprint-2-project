@@ -19,7 +19,7 @@ Apache APISIX.
 
 > [!IMPORTANT]
 > Для запуска проектов требуется Docker Compose версии 2.24.4 или выше, а также доступ к Docker сокету по пути
-`/var/run/docker.sock`.
+> `/var/run/docker.sock`.
 
 ## Схема
 

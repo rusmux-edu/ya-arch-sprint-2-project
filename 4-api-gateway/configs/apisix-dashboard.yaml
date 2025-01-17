@@ -19,7 +19,7 @@ conf:
   #  # It also support CIDR like 192.168.1.0/24 and 2001:0db8::/32
 
   etcd:
-    endpoints: # supports defining multiple etcd host addresses for an etcd cluster
+    endpoints:  # supports defining multiple etcd host addresses for an etcd cluster
       - etcd:2379
       # yamllint disable rule:comments-indentation
       # etcd basic auth info
@@ -55,7 +55,7 @@ authentication:
   # NOTE: Highly recommended to modify this value to protect `manager api`.
   # if it's default value, when `manager api` start, it will generate a random string to replace it.
   expire_time: 3600  # jwt token expire time, in second
-  users: # yamllint enable rule:comments-indentation
+  users:  # yamllint enable rule:comments-indentation
     - username: admin  # username and password for login `manager api`
       password: admin
     - username: user
