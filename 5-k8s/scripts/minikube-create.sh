@@ -6,8 +6,8 @@ HOST_IP=$(ip -4 addr | grep inet | awk 'NR==2 {print $2}' | cut -d '/' -f1)
 
 minikube start \
   --nodes=3 \
-  --cpus='no-limit' \
-  --memory='no-limit' \
+  --cpus=no-limit \
+  --memory=no-limit \
   --insecure-registry="$HOST_IP:5000"
 
 WORKER_NODES=$(kubectl get nodes --no-headers | grep -E '\-m' | awk '{print $1}')
@@ -17,18 +17,9 @@ done
 
 kubectl taint nodes minikube node-role.kubernetes.io/control-plane=:NoSchedule
 
-kd="kubernetes-dashboard"
-helm install $kd $kd/$kd -n $kd --create-namespace
+helmfile apply -f ../helm/helmfile.yaml --skip-diff-on-install --suppress-diff
 
-helm install metrics-server metrics-server/metrics-server -n kube-system \
-  --set 'args[0]="--kubelet-insecure-tls"' \
-  --set existingArgsAppend=true
-
-es="external-secrets"
-helm install $es $es/$es -n $es --create-namespace
-
-cm="chartmuseum"
-helm install $cm $cm/$cm -n $cm --create-namespace --set env.open.DISABLE_API=false
+cm=chartmuseum
 kubectl expose deploy $cm -n $cm --name $cm-node --type=NodePort \
   --overrides '{"spec": {"ports": [{"port": 8080, "nodePort": 30080}]}}'
 

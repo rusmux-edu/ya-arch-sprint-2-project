@@ -1,0 +1,37 @@
+repositories:
+  - name: kubernetes-dashboard
+    url: https://kubernetes.github.io/dashboard
+  - name: metrics-server
+    url: https://kubernetes-sigs.github.io/metrics-server
+  - name: external-secrets
+    url: https://charts.external-secrets.io
+  - name: chartmuseum
+    url: https://chartmuseum.github.io/charts
+
+releases:
+  - name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+    createNamespace: true
+    chart: kubernetes-dashboard/kubernetes-dashboard
+
+  - name: metrics-server
+    namespace: kube-system
+    chart: metrics-server/metrics-server
+    set:
+      - name: args[0]
+        value: --kubelet-insecure-tls
+      - name: existingArgsAppend
+        value: true
+
+  - name: external-secrets
+    namespace: external-secrets
+    createNamespace: true
+    chart: external-secrets/external-secrets
+
+  - name: chartmuseum
+    namespace: chartmuseum
+    createNamespace: true
+    chart: chartmuseum/chartmuseum
+    set:
+      - name: env.open.DISABLE_API
+        value: false
