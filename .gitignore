@@ -3,7 +3,10 @@
 
 ### Project ###
 
+# Drawio files
 *.bkp
+
+# Helm charts
 *.tgz
 
 ### JetBrains+all ###

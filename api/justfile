@@ -1,0 +1,18 @@
+_default:
+    @just --list
+
+[group('lint')]
+lint-py:
+    vulture
+    ruff check
+    ruff format
+    flake8
+    mypy --install-types .
+    uv lock
+
+[group('lint')]
+lint-chart:
+    helm lint --strict chart
+    # helm template chart | kube-score score --all-default-optional -
+    - helm template chart | kube-score score -
+    - POPEYE_REPORT_DIR=$(pwd) popeye -A --save --out html --output-file popeye-report.html
