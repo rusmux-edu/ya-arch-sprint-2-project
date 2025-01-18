@@ -9,5 +9,6 @@ services:
         required: false
     environment:
       REDIS__URL: redis://redis
+
 #      REDIS__URL: redis://ya-arch-sprint-2-project-redis-cluster-1
 #      REDIS__IS_CLUSTER: true

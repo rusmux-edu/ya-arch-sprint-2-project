@@ -2,11 +2,11 @@ checks:
   addAllBuiltIn: true
   exclude:
     - dnsconfig-options
-    - non-isolated-pod # TODO: add NetworkPolicy
+    - non-isolated-pod  # TODO: add NetworkPolicy
     - no-node-affinity
     - required-annotation-email
     - required-label-owner
-    - use-namespace # Helm charts are namespace agnostic
+    - use-namespace  # Helm charts are namespace agnostic
     - minimum-three-replicas
-    - no-rolling-update-strategy # Deployments have a default rolling update strategy
+    - no-rolling-update-strategy  # Deployments have a default rolling update strategy
     - read-secret-from-env-var

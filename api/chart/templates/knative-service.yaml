@@ -21,6 +21,5 @@ spec:
       timeoutSeconds: 20
       automountServiceAccountToken: false
       {{ include "spec.topologySpreadConstraints" . | nindent 6 }}
-      {{ include "spec.affinity" . | nindent 6 }}
       {{ include "spec.containers" . | nindent 6 }}
 {{- end }}

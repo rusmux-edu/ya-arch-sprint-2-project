@@ -1,4 +1,3 @@
-{{/* Expand the name of the chart. */}}
 {{- define "api.name" -}}
 {{- .Chart.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
@@ -63,21 +62,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
       key: REDIS__URL
 {{- end }}
 
-{{- define "spec.affinity" -}}
-affinity:
-  podAntiAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-              - key: app.kubernetes.io/name
-                operator: In
-                values:
-                  - {{ include "api.name" . }}
-          topologyKey: kubernetes.io/hostname
-{{- end }}
-
 {{- define "spec.topologySpreadConstraints" -}}
 topologySpreadConstraints:
   - maxSkew: 2
@@ -91,46 +75,46 @@ topologySpreadConstraints:
 {{- define "spec.podSecurity" -}}
 automountServiceAccountToken: false
 securityContext:
-    runAsUser: 10001
-    runAsGroup: 10002
-    fsGroup: 2000
-    runAsNonRoot: true
-    seccompProfile:
-      type: RuntimeDefault
+  runAsUser: 10001
+  runAsGroup: 10002
+  fsGroup: 2000
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
 {{- end }}
 
 {{- define "spec.containers" -}}
 containers:
-    - name: {{ .Chart.Name }}
-      image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-      imagePullPolicy: {{ .Values.image.pullPolicy }}
-      securityContext:
-        allowPrivilegeEscalation: false
-        readOnlyRootFilesystem: true
-        capabilities:
-          drop:
-            - ALL
-      ports:
-        - containerPort: {{ .Values.service.port }}
-      env:
-        {{ include "api.env" . | nindent 12 }}
-      livenessProbe:
-        httpGet:
-          path: /livez
-          port: {{ .Values.service.port }}
-        initialDelaySeconds: 3
-        periodSeconds: 10
-        timeoutSeconds: 10
-        failureThreshold: 3
-      readinessProbe:
-        httpGet:
-          path: /readyz
-          port: {{ .Values.service.port }}
-        initialDelaySeconds: 3
-        periodSeconds: 10
-        timeoutSeconds: 10
-        successThreshold: 1
-        failureThreshold: 3
-      resources:
-        {{- toYaml .Values.resources | nindent 12 }}
+  - name: {{ .Chart.Name }}
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+    imagePullPolicy: {{ .Values.image.pullPolicy }}
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+    ports:
+      - containerPort: {{ .Values.service.port }}
+    env:
+      {{ include "api.env" . | nindent 12 }}
+    livenessProbe:
+      httpGet:
+        path: /livez
+        port: {{ .Values.service.port }}
+      initialDelaySeconds: 3
+      periodSeconds: 10
+      timeoutSeconds: 10
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /readyz
+        port: {{ .Values.service.port }}
+      initialDelaySeconds: 3
+      periodSeconds: 10
+      timeoutSeconds: 10
+      successThreshold: 1
+      failureThreshold: 3
+    resources:
+      {{- toYaml .Values.resources | nindent 12 }}
 {{- end }}

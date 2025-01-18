@@ -21,6 +21,7 @@ repos:
       - id: destroyed-symlinks
       - id: trailing-whitespace
       - id: end-of-file-fixer
+        exclude: chart
       - id: pretty-format-json
         args: [--autofix, --no-ensure-ascii]
       - id: detect-aws-credentials
@@ -58,6 +59,7 @@ repos:
         additional_dependencies:
           - mdformat-gfm
           - mdformat-shfmt
+        exclude: chart
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
@@ -82,7 +84,7 @@ repos:
       - id: kube-linter
 
   - repo: https://github.com/norwoodj/helm-docs
-    rev:  "v1.14.2"
+    rev: v1.14.2
     hooks:
       - id: helm-docs-built
         args: [--chart-search-root, api/chart]

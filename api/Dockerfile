@@ -31,7 +31,7 @@ ENV PATH="/app/.venv/bin:$PATH" \
 
 CMD ["uvicorn", "--factory", "api.app:create_app", "--host", "0.0.0.0"]
 
-HEALTHCHECK --interval=10s --timeout=10s --start-period=10s CMD python -m api.utils.healthcheck
+HEALTHCHECK --interval=10s --timeout=10s --start-period=10s CMD ["python", "-m", "api.utils.healthcheck"]
 
 FROM build
 
@@ -52,4 +52,4 @@ ENV PATH="/app/.venv/bin:$PATH" \
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["uvicorn", "--factory", "api.app:create_app", "--host", "0.0.0.0"]
 
-HEALTHCHECK --interval=10s --timeout=10s --start-period=10s CMD python -m api.utils.healthcheck
+HEALTHCHECK --interval=10s --timeout=10s --start-period=10s CMD ["python", "-m", "api.utils.healthcheck"]

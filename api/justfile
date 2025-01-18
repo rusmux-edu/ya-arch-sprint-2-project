@@ -1,8 +1,9 @@
 _default:
     @just --list
 
+# Lint Python code
 [group('lint')]
-lint-py:
+lint-code:
     vulture
     ruff check
     ruff format
@@ -10,9 +11,24 @@ lint-py:
     mypy --install-types .
     uv lock
 
+# Lint Helm chart
 [group('lint')]
-lint-chart:
+lint-chart values="chart/values.yaml":
     helm lint --strict chart
-    # helm template chart | kube-score score --all-default-optional -
-    - helm template chart | kube-score score -
-    - POPEYE_REPORT_DIR=$(pwd) popeye -A --save --out html --output-file popeye-report.html
+    # TODO: add `--all-default-optional` when it's fixed
+    - helm template api chart -n api -f {{ values }} | kube-score score -
+    - polaris audit --quiet --format=pretty --only-show-failed-tests=true --helm-chart=chart --helm-values={{ values }}
+    - trivy config -q chart --helm-values={{ values }}
+    helm template api chart -n api --output-dir chart/rendered -f {{ values }}
+    - kics scan --minimal-ui -p chart/rendered | tail -n +23
+
+# Lint Kubernetes cluster
+[group('lint')]
+lint-cluster:
+    - POPEYE_REPORT_DIR=$(pwd) popeye -A --save --out=html --output-file=popeye-report.html
+
+# Lint Docker image and Dockerfile
+[group('lint')]
+lint-image tag:
+    - trivy image --ignore-unfixed --scanners=vuln,misconfig,secret -q ya-arch-sprint-2-project-api:{{ tag }}
+    - kics scan --minimal-ui -p Dockerfile | tail -n +23
