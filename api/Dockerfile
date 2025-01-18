@@ -31,6 +31,8 @@ ENV PATH="/app/.venv/bin:$PATH" \
 
 CMD ["uvicorn", "--factory", "api.app:create_app", "--host", "0.0.0.0"]
 
+HEALTHCHECK --interval=10s --timeout=10s --start-period=10s CMD python -m api.utils.healthcheck
+
 FROM build
 
 # hadolint ignore=DL3008
@@ -40,8 +42,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && apt-get install -y --no-install-recommends \
     tini
 
-RUN groupadd -g 10001 user \
-    && useradd -u 10000 -g user user
+RUN groupadd -g 10002 user \
+    && useradd -u 10001 -g user user
 USER user
 
 ENV PATH="/app/.venv/bin:$PATH" \
@@ -49,3 +51,5 @@ ENV PATH="/app/.venv/bin:$PATH" \
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["uvicorn", "--factory", "api.app:create_app", "--host", "0.0.0.0"]
+
+HEALTHCHECK --interval=10s --timeout=10s --start-period=10s CMD python -m api.utils.healthcheck

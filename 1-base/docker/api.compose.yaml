@@ -16,9 +16,3 @@ services:
     environment:
       MONGODB__URL: mongodb://mongodb
       MONGODB__DB_NAME: example_db
-    healthcheck:
-      test: [CMD, python, -m, api.utils.healthcheck]
-      interval: 10s
-      timeout: 10s
-      start_period: 10s
-      retries: 3
