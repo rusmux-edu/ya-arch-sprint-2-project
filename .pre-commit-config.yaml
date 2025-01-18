@@ -26,6 +26,12 @@ repos:
       - id: detect-aws-credentials
       - id: detect-private-key
 
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 3.0.3
+    hooks:
+      - id: editorconfig-checker
+        alias: ec
+
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.23.1
     hooks:
@@ -36,14 +42,14 @@ repos:
     hooks:
       - id: yamllint
         args: [--format, parsable, --strict, -d, '{extends: relaxed, rules: {line-length: {max: 120}}}']
-        exclude: chart
+        exclude: templates
 
   - repo: https://github.com/lyz-code/yamlfix
     rev: 1.17.0
     hooks:
       - id: yamlfix
         args: [--config-file, yamlfix.toml]
-        exclude: chart
+        exclude: templates
 
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.21
@@ -59,8 +65,24 @@ repos:
       - id: shellcheck
         args: [--format, gcc]
 
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.10.0-2
+    hooks:
+      - id: shfmt
+
   - repo: https://github.com/AleksaC/hadolint-py
     rev: v2.12.1b3
     hooks:
       - id: hadolint
         args: [--failure-threshold, style]
+
+  - repo: https://github.com/stackrox/kube-linter
+    rev: v0.7.1
+    hooks:
+      - id: kube-linter
+
+  - repo: https://github.com/norwoodj/helm-docs
+    rev:  "v1.14.2"
+    hooks:
+      - id: helm-docs-built
+        args: [--chart-search-root, api/chart]

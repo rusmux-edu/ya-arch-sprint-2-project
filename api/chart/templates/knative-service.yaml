@@ -17,5 +17,6 @@ spec:
         autoscaling.knative.dev/window: 30s
     spec:
       automountServiceAccountToken: false
+      {{ include "spec.affinity" . | nindent 6 }}
       {{ include "spec.containers" . | nindent 6 }}
 {{- end }}

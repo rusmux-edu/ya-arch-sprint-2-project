@@ -63,6 +63,21 @@ app.kubernetes.io/instance: {{ .Release.Name }}
       key: REDIS__URL
 {{- end }}
 
+{{- define "spec.affinity" -}}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - {{ include "api.name" . }}
+          topologyKey: kubernetes.io/hostname
+{{- end }}
+
 {{- define "spec.podSecurity" -}}
 automountServiceAccountToken: false
 securityContext:

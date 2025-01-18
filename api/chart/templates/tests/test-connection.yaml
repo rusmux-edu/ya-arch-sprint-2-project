@@ -6,6 +6,9 @@ metadata:
     {{- include "api.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
+    ignore-check.kube-linter.io/latest-tag: ""
+    ignore-check.kube-linter.io/no-liveness-probe: ""
+    ignore-check.kube-linter.io/no-readiness-probe: ""
 spec:
   {{ include "spec.podSecurity" . | nindent 2 }}
   containers:
@@ -16,4 +19,13 @@ spec:
         readOnlyRootFilesystem: true
       command: ['wget']
       args: ['--spider', '{{ include "api.fullname" . }}:{{ .Values.service.port }}']
+      resources:
+        requests:
+          memory: 16Mi
+          cpu: 10m
+          ephemeral-storage: 10Mi
+        limits:
+          memory: 64Mi
+          cpu: 50m
+          ephemeral-storage: 50Mi
   restartPolicy: Never

@@ -17,6 +17,7 @@ spec:
       labels:
         {{- include "api.labels" . | nindent 8 }}
     spec:
+      {{ include "spec.affinity" . | nindent 6 }}
       {{ include "spec.podSecurity" . | nindent 6 }}
       {{ include "spec.containers" . | nindent 6 }}
 {{- end }}
