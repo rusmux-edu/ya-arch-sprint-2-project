@@ -3,11 +3,13 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: {{ include "api.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "api.labels" . | nindent 4 }}
 spec:
   template:
     metadata:
+      namespace: {{ .Release.Namespace }}
       labels:
         {{- include "api.labels" . | nindent 8 }}
       annotations:
@@ -16,7 +18,9 @@ spec:
         autoscaling.knative.dev/target: {{ .Values.knative.target | quote }}
         autoscaling.knative.dev/window: 30s
     spec:
+      timeoutSeconds: 20
       automountServiceAccountToken: false
+      {{ include "spec.topologySpreadConstraints" . | nindent 6 }}
       {{ include "spec.affinity" . | nindent 6 }}
       {{ include "spec.containers" . | nindent 6 }}
 {{- end }}

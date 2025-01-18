@@ -78,13 +78,25 @@ affinity:
           topologyKey: kubernetes.io/hostname
 {{- end }}
 
+{{- define "spec.topologySpreadConstraints" -}}
+topologySpreadConstraints:
+  - maxSkew: 2
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        {{- include "api.selectorLabels" . | nindent 14 }}
+{{- end }}
+
 {{- define "spec.podSecurity" -}}
 automountServiceAccountToken: false
 securityContext:
-    runAsUser: 10000
-    runAsGroup: 10001
+    runAsUser: 10001
+    runAsGroup: 10002
     fsGroup: 2000
     runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
 {{- end }}
 
 {{- define "spec.containers" -}}
@@ -95,6 +107,9 @@ containers:
       securityContext:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
       ports:
         - containerPort: {{ .Values.service.port }}
       env:

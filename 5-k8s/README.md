@@ -41,7 +41,7 @@ ESO (External Secrets Operator) к Vault.
 echo -n 'password' | base64
 ```
 
-И примените манифест:
+Укажите namespace и примените манифест:
 
 ```shell
 kubectl apply -f manifests/vault-secret.yaml

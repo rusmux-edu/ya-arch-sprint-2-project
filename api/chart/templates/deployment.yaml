@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "api.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "api.labels" . | nindent 4 }}
 spec:
@@ -14,10 +15,11 @@ spec:
       {{- include "api.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      namespace: {{ .Release.Namespace }}
       labels:
         {{- include "api.labels" . | nindent 8 }}
     spec:
-      {{ include "spec.affinity" . | nindent 6 }}
+      {{ include "spec.topologySpreadConstraints" . | nindent 6 }}
       {{ include "spec.podSecurity" . | nindent 6 }}
       {{ include "spec.containers" . | nindent 6 }}
 {{- end }}
