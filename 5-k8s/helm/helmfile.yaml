@@ -13,6 +13,8 @@ releases:
     namespace: kube-system
     chart: cilium/cilium
     set:
+      - name: kubeProxyReplacement
+        value: true
       - name: hubble.relay.enabled
         value: true
       - name: hubble.ui.enabled

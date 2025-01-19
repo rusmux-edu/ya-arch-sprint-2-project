@@ -10,11 +10,11 @@ fi
 NUM_NODES=${1:-2}
 USE_CILIUM=${2:-false}
 
-HOST_IP=$(ip -4 addr | grep inet | awk 'NR==2 {print $2}' | cut -d '/' -f1)
-
 CNI="auto"
+EXTRA_CONFIG=""
 if [ "$USE_CILIUM" = true ]; then
-  CNI="bridge" # manually install Cilium to enable Hubble
+  CNI="bridge" # manually install Cilium to use instead of kube-proxy and enable Hubble
+  EXTRA_CONFIG="--extra-config=kubeadm.skip-phases=addon/kube-proxy"
 fi
 
 minikube start \
@@ -22,7 +22,8 @@ minikube start \
   --cpus=no-limit \
   --memory=no-limit \
   --cni="$CNI" \
-  --insecure-registry="$HOST_IP:5000"
+  --insecure-registry="host.minikube.internal:5000" \
+  $EXTRA_CONFIG
 
 WORKER_NODES=$(kubectl get nodes --no-headers | grep -E '\-m' | awk '{print $1}')
 for NODE in $WORKER_NODES; do
@@ -34,7 +35,8 @@ if [ "$NUM_NODES" -gt 2 ]; then
 fi
 
 if [ "$USE_CILIUM" = true ]; then
-  helmfile apply --skip-diff-on-install --suppress-diff -f helm/helmfile.yaml -l name=cilium
+  helmfile apply --skip-diff-on-install --suppress-diff -f helm/helmfile.yaml -l name=cilium \
+    --set k8sServiceHost="$(minikube ip)" --set k8sServicePort=8443
 
   # restart pods that are not using hostNetwork to pick up the Cilium CNI
   pods_to_restart=$(kubectl get pods -A --no-headers=true \

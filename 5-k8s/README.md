@@ -30,8 +30,7 @@ Minikube:
 ./scripts/minikube-create.sh
 ```
 
-Создастся кластер с 3 узлами, развернутся Helm-чарты: Kubernetes Dashboard, Metrics Server, External Secrets,
-ChartMuseum, и установится Knative Operator.
+Создастся кластер с 2 узлами, развернутся Helm-чарты: Metrics Server, External Secrets, ChartMuseum.
 
 Чтобы использовать внешний реестр секретов Vault, нужно создать секрет `api-vault-password` для подключения
 ESO (External Secrets Operator) к Vault.
@@ -55,13 +54,6 @@ kubectl apply -f manifests/vault-secret.yaml -n api
 ```shell
 docker tag ya-arch-sprint-2-project-api:0.1.0-distroless localhost:5000/ya-arch-sprint-2-project-api:0.1.0-distroless
 docker push localhost:5000/ya-arch-sprint-2-project-api:0.1.0-distroless
-```
-
-Измените в файле `helm/values/api.yaml` переменную `image.repository` на `<host_ip>:5000/ya-arch-sprint-2-project-api`,
-где `<host_ip>` можно узнать командой:
-
-```shell
-ip -4 addr | grep inet | awk 'NR==2 {print $2}' | cut -d '/' -f1
 ```
 
 Чтобы чарт можно было установить через локальный реестр чартов ChartMuseum, загрузите его в реестр:
