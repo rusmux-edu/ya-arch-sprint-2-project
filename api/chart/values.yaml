@@ -44,6 +44,9 @@ resources:
     cpu: 250m
     ephemeral-storage: 500Mi
 
+networkPolicy:
+  enabled: false
+
 ingress:
   enabled: true
   className:

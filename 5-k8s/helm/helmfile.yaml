@@ -1,6 +1,6 @@
 repositories:
-  - name: kubernetes-dashboard
-    url: https://kubernetes.github.io/dashboard
+  - name: cilium
+    url: https://helm.cilium.io
   - name: metrics-server
     url: https://kubernetes-sigs.github.io/metrics-server
   - name: external-secrets
@@ -9,10 +9,16 @@ repositories:
     url: https://chartmuseum.github.io/charts
 
 releases:
-  - name: kubernetes-dashboard
-    namespace: kubernetes-dashboard
-    createNamespace: true
-    chart: kubernetes-dashboard/kubernetes-dashboard
+  - name: cilium
+    namespace: kube-system
+    chart: cilium/cilium
+    set:
+      - name: hubble.relay.enabled
+        value: true
+      - name: hubble.ui.enabled
+        value: true
+    wait: true
+    waitForJobs: true
 
   - name: metrics-server
     namespace: kube-system

@@ -30,6 +30,7 @@ A Helm chart for Python API of Yandex.Practicum architecture course sprint 2 pro
 | knative.target | int | `50` |  |
 | mongodb.dbName | string | `nil` |  |
 | mongodb.url | string | `""` |  |
+| networkPolicy.enabled | bool | `false` |  |
 | redis.isCluster | string | `nil` |  |
 | redis.url | string | `""` |  |
 | replicaCount | int | `2` |  |

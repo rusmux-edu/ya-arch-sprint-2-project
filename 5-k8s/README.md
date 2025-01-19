@@ -41,10 +41,11 @@ ESO (External Secrets Operator) к Vault.
 echo -n 'password' | base64
 ```
 
-Укажите namespace и примените манифест:
+Примените манифест:
 
 ```shell
-kubectl apply -f manifests/vault-secret.yaml
+kubectl create ns api
+kubectl apply -f manifests/vault-secret.yaml -n api
 ```
 
 ## Установка Helm-чарта
@@ -76,17 +77,17 @@ helm repo update
 
 ### Serverless
 
-Для использования приложения в serverless-режиме, установите Knative Serving:
+Для использования Knative, нужно установить его в кластер:
 
 ```shell
+kubectl apply -f https://github.com/knative/operator/releases/latest/download/operator.yaml --wait
 kubectl apply -f manifests/knative-serving.yaml
 ```
 
-Дождитесь установки всех компонентов Knative, это может занять несколько минут.
 В файле `helm/values/api.yaml` укажите в переменной `knative.enabled` значение `true` и установите чарт:
 
 ```shell
-helm install api local/api -f helm/values/api.yaml
+helm install api local/api -f helm/values/api.yaml -n api --create-namespace
 ```
 
 Чтобы обратится к сервису извне кластера, нужно установить домен для балансировщика Kourier:
@@ -98,7 +99,7 @@ kubectl patch configmap/config-domain -n knative-serving --type merge -p '{"data
 После чего протестировать работу сервиса можно командой:
 
 ```shell
-curl -H "Host: api.default.example.com" http://<node_ip>:<node_http_port>
+curl -H "Host: api.api.example.com" http://<node_ip>:<node_http_port>
 ```
 
 Где `<node_http_port` – внешний порт балансировщика Kourier.
@@ -109,13 +110,13 @@ curl -H "Host: api.default.example.com" http://<node_ip>:<node_http_port>
 `knative.enabled: false` и `autoscaling.enabled: true`, и установите чарт:
 
 ```shell
-helm install api local/api -f helm/values/api.yaml
+helm install api local/api -f helm/values/api.yaml -n api --create-namespace
 ```
 
 Чтобы обратиться к сервису извне кластера, можно создать NodePort сервис:
 
 ```shell
-kubectl expose deploy api --name api-node --type NodePort --port 8080
+kubectl expose deploy api --name api-node --type NodePort --port 8080 -n api
 ```
 
 И обратиться к сервису по адресу `http://<node_ip>:<node_port>`.
