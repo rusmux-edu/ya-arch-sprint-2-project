@@ -1,13 +1,10 @@
-replicaCount: 3
-
 image:
   repository: host.minikube.internal:5000/ya-arch-sprint-2-project-api
 
-mongodb:
-  dbName: example_db
-
-redis:
-  isCluster: false
+settings:
+  mongodb:
+    dbName: example_db
+    writeConcern: 1
 
 externalSecrets:
   enabled: true

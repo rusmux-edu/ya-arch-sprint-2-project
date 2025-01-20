@@ -9,13 +9,15 @@ service:
   type: ClusterIP
   port: 8080
 
-mongodb:
-  url: ''
-  dbName:
-
-redis:
-  url: ''
-  isCluster:
+settings:
+  mongodb:
+    url: ''
+    dbName:
+    writeConcern:
+  redis:
+    url: ''
+    isCluster:
+  dummy:
 
 knative:
   enabled: false

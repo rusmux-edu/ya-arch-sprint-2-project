@@ -8,7 +8,7 @@ lint-code:
     ruff check
     ruff format
     flake8
-    mypy --install-types .
+    mypy .
     uv lock
 
 # Lint Helm chart

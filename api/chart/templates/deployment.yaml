@@ -6,6 +6,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "api.labels" . | nindent 4 }}
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -19,7 +21,7 @@ spec:
       labels:
         {{- include "api.labels" . | nindent 8 }}
     spec:
-      {{ include "spec.topologySpreadConstraints" . | nindent 6 }}
-      {{ include "spec.podSecurity" . | nindent 6 }}
-      {{ include "spec.containers" . | nindent 6 }}
+      {{- include "spec.topologySpreadConstraints" . | nindent 6 }}
+      {{- include "spec.podSecurity" . | nindent 6 }}
+      {{- include "spec.containers" . | nindent 6 }}
 {{- end }}

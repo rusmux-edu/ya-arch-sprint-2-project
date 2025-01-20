@@ -20,5 +20,5 @@ spec:
     spec:
       timeoutSeconds: 20
       automountServiceAccountToken: false
-      {{ include "spec.containers" . | nindent 6 }}
+      {{- include "spec.containers" . | nindent 6 }}
 {{- end }}

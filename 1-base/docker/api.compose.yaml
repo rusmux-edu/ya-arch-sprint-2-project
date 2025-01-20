@@ -16,3 +16,4 @@ services:
     environment:
       MONGODB__URL: mongodb://mongodb
       MONGODB__DB_NAME: example_db
+      MONGODB__WRITE_CONCERN: 1

@@ -50,6 +50,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
     configMapKeyRef:
       name: {{ include "api.fullname" . }}
       key: MONGODB__DB_NAME
+- name: MONGODB__WRITE_CONCERN
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "api.fullname" . }}
+      key: MONGODB__WRITE_CONCERN
 - name: REDIS__IS_CLUSTER
   valueFrom:
     configMapKeyRef:
@@ -60,6 +65,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
     secretKeyRef:
       name: {{ include "api.fullname" . }}
       key: REDIS__URL
+- name: DUMMY
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "api.fullname" . }}
+      key: DUMMY
 {{- end }}
 
 {{- define "spec.topologySpreadConstraints" -}}
@@ -69,7 +79,7 @@ topologySpreadConstraints:
     whenUnsatisfiable: DoNotSchedule
     labelSelector:
       matchLabels:
-        {{- include "api.selectorLabels" . | nindent 14 }}
+        {{- include "api.selectorLabels" . | nindent 8 }}
 {{- end }}
 
 {{- define "spec.podSecurity" -}}
@@ -97,7 +107,7 @@ containers:
     ports:
       - containerPort: {{ .Values.service.port }}
     env:
-      {{ include "api.env" . | nindent 12 }}
+      {{- include "api.env" . | nindent 6 }}
     livenessProbe:
       httpGet:
         path: /livez
@@ -116,5 +126,5 @@ containers:
       successThreshold: 1
       failureThreshold: 3
     resources:
-      {{- toYaml .Values.resources | nindent 12 }}
+      {{- toYaml .Values.resources | nindent 6 }}
 {{- end }}

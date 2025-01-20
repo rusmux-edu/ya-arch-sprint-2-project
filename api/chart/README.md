@@ -28,11 +28,7 @@ A Helm chart for Python API of Yandex.Practicum architecture course sprint 2 pro
 | knative.maxScale | int | `10` |  |
 | knative.metric | string | `"rps"` |  |
 | knative.target | int | `50` |  |
-| mongodb.dbName | string | `nil` |  |
-| mongodb.url | string | `""` |  |
 | networkPolicy.enabled | bool | `false` |  |
-| redis.isCluster | string | `nil` |  |
-| redis.url | string | `""` |  |
 | replicaCount | int | `2` |  |
 | resources.limits.cpu | string | `"250m"` |  |
 | resources.limits.ephemeral-storage | string | `"500Mi"` |  |
@@ -42,4 +38,10 @@ A Helm chart for Python API of Yandex.Practicum architecture course sprint 2 pro
 | resources.requests.memory | string | `"64Mi"` |  |
 | service.port | int | `8080` |  |
 | service.type | string | `"ClusterIP"` |  |
+| settings.dummy | string | `nil` |  |
+| settings.mongodb.dbName | string | `nil` |  |
+| settings.mongodb.url | string | `""` |  |
+| settings.mongodb.writeConcern | string | `nil` |  |
+| settings.redis.isCluster | string | `nil` |  |
+| settings.redis.url | string | `""` |  |
 

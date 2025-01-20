@@ -11,7 +11,8 @@ metadata:
     ignore-check.kube-linter.io/no-liveness-probe: ""
     ignore-check.kube-linter.io/no-readiness-probe: ""
 spec:
-  {{ include "spec.podSecurity" . | nindent 2 }}
+  {{- include "spec.podSecurity" . | nindent 2 }}
+  restartPolicy: Never
   containers:
     - name: wget
       image: busybox
@@ -33,4 +34,3 @@ spec:
           memory: 64Mi
           cpu: 50m
           ephemeral-storage: 50Mi
-  restartPolicy: Never

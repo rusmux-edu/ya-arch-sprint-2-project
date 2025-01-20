@@ -46,6 +46,12 @@ async def readyz(
     return {"status": "ready", "host": SERVICE_HOST_IP}
 
 
+@router.get("/dummy")
+def dummy() -> str:
+    """Get dummy settings parameter."""
+    return settings.dummy
+
+
 @router.get("/")
 async def root(
     client: tp.Annotated[AsyncIOMotorClient, Depends(get_db_client)],

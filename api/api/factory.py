@@ -22,7 +22,7 @@ async def get_db_client() -> AsyncIOMotorClient:
 async def get_db(
     client: tp.Annotated[AsyncIOMotorClient, Depends(get_db_client)],
 ) -> AsyncIOMotorDatabase:
-    return client.get_database(settings.mongodb.db_name, write_concern=WriteConcern(w=2))
+    return client.get_database(settings.mongodb.db_name, write_concern=WriteConcern(w=settings.mongodb.write_concern))
 
 
 @cashews.cache(ttl=None)

@@ -12,6 +12,7 @@ SERVICE_HOST_IP = socket.gethostbyname(socket.gethostname())
 class BasePydanticSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
+        env_ignore_empty=True,
         extra="ignore",
         validate_assignment=True,
         validate_default=True,
@@ -22,6 +23,7 @@ class BasePydanticSettings(BaseSettings):
 class MongoDBSettings(BasePydanticSettings):
     url: str
     db_name: str
+    write_concern: int = 2
 
 
 class RedisSettings(BasePydanticSettings):
@@ -47,6 +49,7 @@ class Settings(BasePydanticSettings):
     mongodb: MongoDBSettings
     redis: RedisSettings | None = None
     gateway: GatewaySettings | None = None
+    dummy: str = "Lorem ipsum"
 
     def __str__(self) -> str:
         return self.__repr__()
