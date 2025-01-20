@@ -1,4 +1,4 @@
-FROM python:3.10-slim AS build
+FROM python:3.12-slim AS build
 
 # fail build if there is an error at any stage in the pipe
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
@@ -22,7 +22,7 @@ COPY README.md ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
-FROM nvcr.io/nvidia/distroless/python:3.10-v3.4.4 AS distroless
+FROM nvcr.io/nvidia/distroless/python:3.12-v3.4.5 AS distroless
 
 COPY --from=build /app /app
 
