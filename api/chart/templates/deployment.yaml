@@ -23,7 +23,7 @@ spec:
       annotations:
         {{- include "api.template.annotations" . | nindent 8 }}
     spec:
-      automountServiceAccountToken: false
+      serviceAccountName: {{ include "api.serviceAccountName" . }}
       {{- include "api.template.topologySpreadConstraints" . | nindent 6 }}
       {{- include "api.podSecurityContext" . | nindent 6 }}
       {{- include "api.containers" . | nindent 6 }}

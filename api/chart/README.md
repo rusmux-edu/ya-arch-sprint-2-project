@@ -38,6 +38,8 @@ A Helm chart for Python API of Yandex.Practicum architecture course sprint 2 pro
 | resources.requests.memory | string | `"64Mi"` |  |
 | service.port | int | `8080` |  |
 | service.type | string | `"ClusterIP"` |  |
+| serviceAccount.create | bool | `true` |  |
+| serviceAccount.name | string | `nil` |  |
 | settings.dummy | string | `nil` |  |
 | settings.mongodb.dbName | string | `nil` |  |
 | settings.mongodb.url | string | `""` |  |

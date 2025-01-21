@@ -21,7 +21,7 @@ spec:
         autoscaling.knative.dev/target: {{ .Values.knative.target | quote }}
         autoscaling.knative.dev/window: 30s
     spec:
+      serviceAccountName: {{ include "api.serviceAccountName" . }}
       timeoutSeconds: 20
-      automountServiceAccountToken: false
       {{- include "api.containers" . | nindent 6 }}
 {{- end }}

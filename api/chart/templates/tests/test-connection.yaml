@@ -11,7 +11,7 @@ metadata:
     ignore-check.kube-linter.io/no-liveness-probe: ""
     ignore-check.kube-linter.io/no-readiness-probe: ""
 spec:
-  automountServiceAccountToken: false
+  serviceAccountName: {{ include "api.serviceAccountName" . }}
   {{- include "api.podSecurityContext" . | nindent 2 }}
   restartPolicy: Never
   containers:

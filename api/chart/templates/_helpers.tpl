@@ -34,6 +34,14 @@ app.kubernetes.io/name: {{ include "api.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "api.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "api.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
 {{- define "api.env" -}}
 - name: UVICORN_PORT
   valueFrom:
