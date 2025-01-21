@@ -50,7 +50,7 @@ networkPolicy:
   enabled: false
 
 ingress:
-  enabled: true
+  enabled: false
   className:
   annotations: {}
 

@@ -6,6 +6,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "api.labels" . | nindent 4 }}
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   template:
     metadata:
@@ -13,6 +15,7 @@ spec:
       labels:
         {{- include "api.labels" . | nindent 8 }}
       annotations:
+        {{- include "spec.annotations" . | nindent 8 }}
         autoscaling.knative.dev/max-scale: {{ .Values.knative.maxScale | quote }}
         autoscaling.knative.dev/metric: {{ .Values.knative.metric }}
         autoscaling.knative.dev/target: {{ .Values.knative.target | quote }}
