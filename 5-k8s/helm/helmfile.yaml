@@ -12,13 +12,25 @@ releases:
   - name: cilium
     namespace: kube-system
     chart: cilium/cilium
-    set:
-      - name: kubeProxyReplacement
-        value: true
-      - name: hubble.relay.enabled
-        value: true
-      - name: hubble.ui.enabled
-        value: true
+    values:
+      - hubble:
+          relay:
+            enabled: true
+          ui:
+            enabled: true
+      - kubeProxyReplacement: true
+      - routingMode: native
+      - ipam:
+          mode: kubernetes
+      - ipv4NativeRoutingCIDR: 10.244.0.0/16
+      - autoDirectNodeRoutes: true
+      - bpf:
+          masquerade: true
+      - ipMasqAgent:
+          enabled: true
+          config:
+            nonMasqueradeCIDRs:
+              - 10.244.0.0/8
     wait: true
     waitForJobs: true
 
