@@ -38,6 +38,15 @@ if [ "$USE_CILIUM" = true ]; then
   helmfile apply --skip-diff-on-install --suppress-diff -f helm/helmfile.yaml -l name=cilium \
     --set k8sServiceHost="$(minikube ip)" --set k8sServicePort=8443
 
+  # without kube-proxy, we need to update CoreDNS to use the host's DNS server
+  # see: https://github.com/cilium/cilium/issues/29113
+  kubectl get cm coredns -n kube-system -o yaml >coredns.yaml
+  dns_server=$(scutil --dns | grep 'nameserver' | awk 'NR==1 {print $3}')
+  sed -i'.bak' "s/forward \. \/etc\/resolv\.conf/forward \. $dns_server/" coredns.yaml
+  kubectl apply -f coredns.yaml
+  rm -rf coredns.yaml coredns.yaml.bak
+  kubectl -n kube-system rollout restart deploy coredns
+
   # restart pods that are not using hostNetwork to pick up the Cilium CNI
   pods_to_restart=$(kubectl get pods -A --no-headers=true \
     -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name,HOSTNETWORK:.spec.hostNetwork |
