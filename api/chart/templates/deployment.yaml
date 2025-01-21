@@ -21,9 +21,10 @@ spec:
       labels:
         {{- include "api.labels" . | nindent 8 }}
       annotations:
-        {{- include "spec.annotations" . | nindent 8 }}
+        {{- include "api.template.annotations" . | nindent 8 }}
     spec:
-      {{- include "spec.topologySpreadConstraints" . | nindent 6 }}
-      {{- include "spec.podSecurity" . | nindent 6 }}
-      {{- include "spec.containers" . | nindent 6 }}
+      automountServiceAccountToken: false
+      {{- include "api.template.topologySpreadConstraints" . | nindent 6 }}
+      {{- include "api.podSecurityContext" . | nindent 6 }}
+      {{- include "api.containers" . | nindent 6 }}
 {{- end }}

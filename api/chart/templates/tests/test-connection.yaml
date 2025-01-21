@@ -11,7 +11,8 @@ metadata:
     ignore-check.kube-linter.io/no-liveness-probe: ""
     ignore-check.kube-linter.io/no-readiness-probe: ""
 spec:
-  {{- include "spec.podSecurity" . | nindent 2 }}
+  automountServiceAccountToken: false
+  {{- include "api.podSecurityContext" . | nindent 2 }}
   restartPolicy: Never
   containers:
     - name: wget

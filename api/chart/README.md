@@ -20,7 +20,7 @@ A Helm chart for Python API of Yandex.Practicum architecture course sprint 2 pro
 | image.tag | string | `"0.1.0-distroless"` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.className | string | `nil` |  |
-| ingress.enabled | bool | `true` |  |
+| ingress.enabled | bool | `false` |  |
 | ingress.hosts[0].host | string | `"api.local"` |  |
 | ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |

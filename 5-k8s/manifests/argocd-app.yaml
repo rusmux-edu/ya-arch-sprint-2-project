@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: api
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/rusmux-edu/ya-arch-sprint-2-project
+    targetRevision: HEAD
+    path: api/chart
+    helm:
+      releaseName: api
+      valueFiles:
+        - ../../5-k8s/helm/values/api.yaml
+      parameters:
+        - name: knative.enabled
+          value: "false"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: api
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+  ignoreDifferences:
+    - group: ""
+      kind: ConfigMap
+      name: api
+      jsonPointers:
+        - /data

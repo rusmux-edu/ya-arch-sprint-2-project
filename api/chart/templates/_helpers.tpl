@@ -72,12 +72,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
       key: DUMMY
 {{- end }}
 
-{{- define "spec.annotations" -}}
+{{- define "api.template.annotations" -}}
 checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+{{- if not .Values.externalSecrets.enabled }}
 checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
 {{- end }}
+{{- end }}
 
-{{- define "spec.topologySpreadConstraints" -}}
+{{- define "api.template.topologySpreadConstraints" -}}
 topologySpreadConstraints:
   - maxSkew: 2
     topologyKey: kubernetes.io/hostname
@@ -87,8 +89,7 @@ topologySpreadConstraints:
         {{- include "api.selectorLabels" . | nindent 8 }}
 {{- end }}
 
-{{- define "spec.podSecurity" -}}
-automountServiceAccountToken: false
+{{- define "api.podSecurityContext" -}}
 securityContext:
   runAsUser: 10001
   runAsGroup: 10002
@@ -98,7 +99,7 @@ securityContext:
     type: RuntimeDefault
 {{- end }}
 
-{{- define "spec.containers" -}}
+{{- define "api.containers" -}}
 containers:
   - name: {{ .Chart.Name }}
     image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
