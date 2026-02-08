@@ -1,26 +1,24 @@
-# Шардирование, репликация, кэширование и маршрутизация
+# Sharding, Replication, Caching, and Routing
 
-В этом проекте реализовано шардирование и репликация MongoDB, кэширование запросов к API в Redis и маршрутизация через
-Apache APISIX.
+This project implements MongoDB sharding and replication, API request caching in Redis, and routing via Apache APISIX.
 
-В папках развертываются:
+The following folders deploy:
 
-- [1-base](1-base) – MongoDB без шардирования и репликации, API без кэширования.
+- [1-base](1-base) – MongoDB without sharding and replication, API without caching.
 
-- [2-sharding-repl](2-sharding-repl) – MongoDB с шардированием и репликами (или без), API без кэширования.
+- [2-sharding-repl](2-sharding-repl) – MongoDB with sharding and replicas (or without), API without caching.
 
-- [3-sharding-repl-cache](3-sharding-repl-cache) – API с кэшированием запросов в Redis, MongoDB с шардированием и
-  репликами.
+- [3-sharding-repl-cache](3-sharding-repl-cache) – API with Redis request caching, MongoDB with sharding and replicas.
 
-- [4-api-gateway](4-api-gateway) – несколько экземпляров API с маршрутизацией через Apache APISIX и кэшированием
-  запросов в Redis, MongoDB с шардированием и репликами.
+- [4-api-gateway](4-api-gateway) – multiple API instances with routing via Apache APISIX and Redis request caching,
+  MongoDB with sharding and replicas.
 
-- [5-k8s](5-k8s) – Helm-чарт API в Kubernetes с кэшированием запросов в Redis, MongoDB с шардированием и репликами.
+- [5-k8s](5-k8s) – Helm chart for the API in Kubernetes with Redis request caching, MongoDB with sharding and replicas.
 
 > [!IMPORTANT]
-> Для запуска проектов требуется Docker Compose версии 2.24.4 или выше, а также доступ к Docker сокету по пути
+> To run the project, Docker Compose version 2.24.4 or higher is required, as well as access to the Docker socket at
 > `/var/run/docker.sock`.
 
-## Схема
+## Diagram
 
 <img src="4-api-gateway/diagram.drawio.png" alt="diagram" height="720">
